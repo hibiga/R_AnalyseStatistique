@@ -277,7 +277,7 @@ Factor(c(,), ordered)
 
 Repetition : 
 - gl(2,4) : 11112222
-- 	gl(2,4,labels = c(TRUE, FALSE)) -> T T T T F F F F 
+	- gl(2,4,labels = c(TRUE, FALSE)) -> T T T T F F F F 
 - factor(rep())
 
 interaction : multiplication (porduit cartésien) 
@@ -704,17 +704,14 @@ PHOTOS
 
 
 Intégrale : 
-- integrate : pour vecteur --> p(0<x<0.5)
-
-integrate (f, lower=0, upper = 0.5)$value
+integrate : pour vecteur
+- p(0<x<0.5)
+	- integrate (f, lower=0, upper = 0.5)$value
 - p(x>4)=p(4<x<inf)
-
-integrate (f, lower=4, upper = Inf)$value
+	- integrate (f, lower=4, upper = Inf)$value
 - p(2<x3)
-
-integrate (f, lower=2, upper = 3)$value
-
-pexp(3, rate=0.5)-pexp(2, rate=0.5)
+	- integrate (f, lower=2, upper = 3)$value
+	- pexp(3, rate=0.5)-pexp(2, rate=0.5)
 - sinon sapply : integrate(function(y){sapply(y,f)}, lower=0, upper=2))
 - sinon fonction créé par nous même : 
 Integrate(f,borne,borne)$value
@@ -804,17 +801,16 @@ sample(x,3) :
 ## Estimation paramétrique pour un échantillon 
 Fitdistr(x, « gamma ») 
 - estimation des deux paramètres de loi gamma
-
-beta, Cauchy, χ2, exponentielle, Fisher, gamma, géométrique, log-normale, logistic, binomiale négative, normale, Poisson, Student et Weibull 
+	- beta, Cauchy, χ2, exponentielle, Fisher, gamma, géométrique, log-normale, logistic, binomiale négative, normale, Poisson, Student et Weibull 
 
 - library MASS
 
-Contient : 
-- Estimate : estimation du ou (des) paramètre(s)
-- Sq : variance(s) estimée(s) du (des) paramètre(s) 
-- Vcov : matrice de variance-covariance estimée 
-- Loglik : maximum de la fonction de vraisemblance 
-- N : nombre d’observations 
+- Contient : 
+	- Estimate : estimation du ou (des) paramètre(s)
+	- Sq : variance(s) estimée(s) du (des) paramètre(s) 
+	- Vcov : matrice de variance-covariance estimée 
+	- Loglik : maximum de la fonction de vraisemblance 
+	- N : nombre d’observations 
 ## Propriétés asymptotiques d’un estimateur 
 lambda <- 1
 
@@ -955,13 +951,11 @@ with(iris,cov(Petal.Length,Petal.Width)) : covariance
 
 with(iris,cor(Petal.Length,Petal.Width)) : corrélation 
 
---> plus proche de 1 ou -1 : plus nuage de point aligné le long de la droite ajustée 
-
---> cor(…,method=) : 
-- spearman : préciser valeur {\\ spearman}
-- kendall : préciser valeur kendall
-- Pearson (par défaut)
-
+- plus proche de 1 ou -1 : plus nuage de point aligné le long de la droite ajustée 
+- cor(…,method=) : 
+	- spearman : préciser valeur {\\ spearman}
+	- kendall : préciser valeur kendall
+	- Pearson (par défaut)
 droite de régression : with(iris,lsfit(x=Petal.Length,y=Petal.Width))
 - résidus 
 - coeff 
@@ -979,28 +973,22 @@ OU bxplot(x~y) [library(lattice)
 tester hypothèse nulle moy1 = my2 🡪 pvalue inf à 5% : rejette l’hypothèse nulle d’égalité des moyennes 
 ## Test d’égalité de moyennes de deux échantillons gaussiens 
 Student : vars inconnus et identiques 
-
-t.test
-- 2 vecteurs : with(data, t.test(vect1, vect2, var.equal=TRUE))
-- Stack(data) : tab 1er col rendements et 2ème col variable qualitative (2 vecteurs) 🡪 t.test(values~ind, var.equal = TRUE, data=stack(data))
-
-si autour de la puissance du test : power.t.test
-- Welch : vars inconnus et différentes [var.equal fixé à False par défaut]
-
-t.test 
-- 2 vecteurs : with(data, t.test(vect1, vect2))
-
-oneway.test(values~ind, data=..) 
-
+- t.test
+	- 2 vecteurs : with(data, t.test(vect1, vect2, var.equal=TRUE))
+	- Stack(data) : tab 1er col rendements et 2ème col variable qualitative (2 vecteurs) 🡪 t.test(values~ind, var.equal = TRUE, data=stack(data))
+- si autour de la puissance du test : power.t.test
+Welch : vars inconnus et différentes [var.equal fixé à False par défaut]
+- t.test 
+	- 2 vecteurs : with(data, t.test(vect1, vect2))
+	- oneway.test(values~ind, data=..) 
 Echantillons appariés : 
-- t.test --> 2 vecteurs : with(data, t.test(vect1, vect2, paired =TRUE))
-
+- t.test
+	- 2 vecteurs : with(data, t.test(vect1, vect2, paired =TRUE))
 Comparaisons 2 à 2 plusieurs échantillons : test de Student 
-
---> pairwise.t.test(col1, col2) [pas hésiter à appliquer attach(data) puis detach(data)] : 
-- correction au calculs des p_valeurs appliqué (méthode Holm par défaut) : bonferroni, hochberg, hommel, BH ou fdr, BR
-- par exemple, si on veut ne pas prendre en compte de correction : pairwise.t.test(col1, col2, p.adjust= « none »)
-- pool.sd : choisir si écart-type est estimé à partir de l’ensemble des obs ou pas 
+- pairwise.t.test(col1, col2) [pas hésiter à appliquer attach(data) puis detach(data)] : 
+	- correction au calculs des p_valeurs appliqué (méthode Holm par défaut) : bonferroni, hochberg, hommel, BH ou fdr, BR
+	- par exemple, si on veut ne pas prendre en compte de correction : pairwise.t.test(col1, col2, p.adjust= « none »)
+	- pool.sd : choisir si écart-type est estimé à partir de l’ensemble des obs ou pas 
 ## Test d’égalité de variances pour des échantillons gaussiens 
 Fisher : 
 - with(data, var.test(vecteur1, vecteur2))
@@ -1038,14 +1026,14 @@ Prob = TRUE :  ordonnée les densités de fréquences pas les effectifs
 
 Beaks=c(…) ou 10 : définir classe 
 
-Fonction pour définir les classes : 
-- Règles prédéfinies par r : 
+- Fonction pour définir les classes : 
+	- Règles prédéfinies par r : 
 
 
 TABLEAU
 
 
-- Règle de Yule (pas prédéfini) : 
+	- Règle de Yule (pas prédéfini) : 
 nclass.Yule <- function(x) {
 
  n <- length(x)
