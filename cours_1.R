@@ -1,7 +1,7 @@
 ## -------------            Script R Cours 1 - 2018     -- ----------------------	
 # R studio , voir page 7 du cours
 
-# Ecritures de script R abordées avec Rcommander: fonctions, arguments, variables, affectation
+# Ecritures de script R abordÃ©es avec Rcommander: fonctions, arguments, variables, affectation
 # Utilisation  de l'aide
 
 # ----------------------------------------------------------------------------------------
@@ -9,11 +9,11 @@
 # ------  FONCTIONS : usage de quelques fonctions predefinies
 # -----------------------------------------------------------------------------------------
 
-# Cours 1:  vecteurs, matrices, facteurs,  mécanisme de sélection
+# Cours 1:  vecteurs, matrices, facteurs,  mÃ©canisme de sÃ©lection
 
 # -------------         I Objets R :    VECTEURS             ---------------------------------
 
-# objet le plus élémentaire sous R, calcul vectoriel
+# objet le plus Ã©lÃ©mentaire sous R, calcul vectoriel
 
 # ------------- 		 CREATION , affectation  .   fonctions c seq rep
 # affectation. affichage
@@ -30,13 +30,13 @@ y=c(1,3,5)
 
 x;x2;y
 
-length(x)	; mode(x)  # vecteurs de 4 caractères
-length(y); mode(y)    # vecteurs de 3 numériques
+length(x)	; mode(x)  # vecteurs de 4 caractÃ¨res
+length(y); mode(y)    # vecteurs de 3 numÃ©riques
 
 b=c(TRUE,TRUE,FALSE)
-length(b)	; mode(b)  # vecteurs de 3 booléens (ou logique)
+length(b)	; mode(b)  # vecteurs de 3 boolÃ©ens (ou logique)
 
-c("a",1) # avec conversion des numériques en caractères
+c("a",1) # avec conversion des numÃ©riques en caractÃ¨res
 mode(c("a",1))
 
 attributes(x)
@@ -53,45 +53,45 @@ seq(1,6, length=3)
 rep("a",5)	 # rep : repeter
 ?rep
 x
-rep(x,4) 	  # 2ème argument : times, non nommé ici
+rep(x,4) 	  # 2Ã¨me argument : times, non nommÃ© ici
 rep(x,each=4)
 
-# ------------    	OPERATIONS VECTORIELLES : terme à terme
-# opérations sur les vecteurs: de numériques, de booléens ou de caractères
+# ------------    	OPERATIONS VECTORIELLES : terme Ã  terme
+# opÃ©rations sur les vecteurs: de numÃ©riques, de boolÃ©ens ou de caractÃ¨res
 
-# -- opérations sur vecteurs de numériques
+# -- opÃ©rations sur vecteurs de numÃ©riques
 y
 z
-y+z	 # somme usuelle de 2 n-uplets de réels,
+y+z	 # somme usuelle de 2 n-uplets de rÃ©els,
 2*y    # produit usuel par un scalaire
-#  opérations classiques sur des n-uplets de réels, vues en math.
+#  opÃ©rations classiques sur des n-uplets de rÃ©els, vues en math.
 #  et aussi :
-y*z	 # multiplication de 2 vecteurs !!  :terme à terme  
-#        idem pour exposant , terme à terme
+y*z	 # multiplication de 2 vecteurs !!  :terme Ã  terme  
+#        idem pour exposant , terme Ã  terme
 z;y	; z^y  
 log(y)  # pour chaque terme du vecteur
 y>z
-y==z  # opérations booleennes;  ==  pour l'égalité 
+y==z  # opÃ©rations booleennes;  ==  pour l'Ã©galitÃ© 
 
-# mécanisme du recyclage
+# mÃ©canisme du recyclage
 c(1,2,3,4,5,6)
 c(1,2)  
 c(1,2,3,4,5,6)+c(1,2)  	
 y
 y+1    # somme d'un vecteur et d'un nombre: non licite en math
 y>2    
-y==3  # égalité
+y==3  # Ã©galitÃ©
 y!=3  # difference
 
-# -- opérations sur booléens
+# -- opÃ©rations sur boolÃ©ens
 b1=c(TRUE,TRUE,FALSE)
 b2=c(TRUE,FALSE,FALSE)
-b1&b2  # opérateur logique 'et' terme à terme
-b1|b2  # opérateur logique 'ou' terme à terme
+b1&b2  # opÃ©rateur logique 'et' terme Ã  terme
+b1|b2  # opÃ©rateur logique 'ou' terme Ã  terme
 
 
-# -- opérations sur vecteurs de caractères
-# concaténation
+# -- opÃ©rations sur vecteurs de caractÃ¨res
+# concatÃ©nation
 c1="bon";c2=c("jour")
 
 c1;c2
@@ -99,34 +99,34 @@ c(c1,c2)
 paste("bon","jour")
 paste(c1,c2)
 paste(c1,c2,sep="")
-# concatenation, terme à terme
+# concatenation, terme Ã  terme
 d1=c("bon","he");d2=c("jour","llo")
 paste(d1,d2,sep="")
 
 # avec recyclage
-paste("a",1:4)      # conversion des numériques en caractères 
+paste("a",1:4)      # conversion des numÃ©riques en caractÃ¨res 
 paste("a",1:4,sep="_")   
 
 
-# -----------     SELECTION d'élements d'un vecteur
-#  ---- sélection avec un indice, un vecteur d'indices
+# -----------     SELECTION d'Ã©lements d'un vecteur
+#  ---- sÃ©lection avec un indice, un vecteur d'indices
 x
 x[1]		
 x[c(2,3)]	
 x[c(1,1,1,2)]
 
 x[1:3]
-# Exemple de notes d'éleves 
+# Exemple de notes d'Ã©leves 
 note=c(12,8,10,12)
 prenom=c("alain","bernard","claire","denis")
 age=c(5,10,12,15)
 note[3]     # selection avec indice
-prenom[1:3]    # sélection avec un vecteur d'indices
+prenom[1:3]    # sÃ©lection avec un vecteur d'indices
 
-#   ----  sélection avec un nom ou un vecteur de noms
+#   ----  sÃ©lection avec un nom ou un vecteur de noms
 # la fonction names 
 #     *permet de nommer les elements d'un vecteur (!)
-#     *ou donne les noms des éléments du vecteur
+#     *ou donne les noms des Ã©lÃ©ments du vecteur
 
 names(note)
 names(note)=c("bleu","blanc","rouge","noir")
@@ -135,18 +135,18 @@ names(note)
 note["blanc"]  # selection avec le nom
 note[c("blanc","noir")]  # selection avec un vecteur de noms
 
-#  ---- sélection avec un vecteur de booléens
+#  ---- sÃ©lection avec un vecteur de boolÃ©ens
 age>5
 prenom[age>5]
 note>10
 note[note>10]
 prenom[note>10]
 appreciation=c("B","B","B","I")
-# un étudiant est admis si sa note>10 et si il a bonne appréciation
+# un Ã©tudiant est admis si sa note>10 et si il a bonne apprÃ©ciation
 
 (note>10) & (appreciation=="B")
 admis=(note>10) & (appreciation=="B")
-admis  # vecteur de booleens qui indique si les étudiants sont admis
+admis  # vecteur de booleens qui indique si les Ã©tudiants sont admis
 prenom[admis]
 note[appreciation=="B"]
 
@@ -155,7 +155,7 @@ x[-c(1,2)]
 
 prenom 
 
-# ---------     Quelques FONCTIONS prédefinies sur les vecteurs
+# ---------     Quelques FONCTIONS prÃ©definies sur les vecteurs
 y
 sum(y)
 prod(y)
@@ -171,23 +171,23 @@ which.min(note)
 prenom[which.min(note)]
 
 admis
-sum(admis)   # conversion des booléens TRUE=1 et FALSE=0
-sum(admis)/length(admis)   # fréquence des admis
+sum(admis)   # conversion des boolÃ©ens TRUE=1 et FALSE=0
+sum(admis)/length(admis)   # frÃ©quence des admis
 
 
 
 # ------------     I Objets R :           MATRICES           --------------------------
-#  tableau à 2 dimensions
+#  tableau Ã  2 dimensions
 A=matrix(c(4,2,3,4,5,2,1,6,3,1,5,3),nrow=3,ncol=4) # matrice de 3 lignes et 4 colonnes
 A
 attributes(A)  # attribut dimension
 dim(A)  # nombre de lignes et nombre de colonnes
-length(A);mode(A)  # 12 termes numériques
+length(A);mode(A)  # 12 termes numÃ©riques
  
-# accés avec indice de ligne et indice de colonne. Commencent à 1
+# accÃ©s avec indice de ligne et indice de colonne. Commencent Ã  1
 A[2,4]     # terme de ligne 2 et colonne 4
 
-# avec possibilité de sélection multiple 		
+# avec possibilitÃ© de sÃ©lection multiple 		
 A[3,]	 	    # termes de ligne 3, toutes colonnes
 A[,2]	      # termes de toutes lignes, colonne 2
 
@@ -211,11 +211,11 @@ eigen(M)
 ?factor
 sexe=factor(c("m","f","f","f")); length(sexe);  sexe
 sex=factor(c(1,2,2,2),labels=c("homme","femme"))
-length(sex);  sex    # affichage des étiquettes
+length(sex);  sex    # affichage des Ã©tiquettes
 mode(sexe);mode(sex)
 class(sexe);class(sex)
 attributes(sexe)
-levels(sexe);levels(sex) # ordre alphabétque, ordre des codages numériques
+levels(sexe);levels(sex) # ordre alphabÃ©tque, ordre des codages numÃ©riques
 ? levels
 nlevels(sexe)
 
@@ -229,20 +229,20 @@ niveau=ordered(c("AB","B","AB","AB","B","AB"),levels=c("AB","B","TB"))
 niveau
 is.factor(niveau)
 table(niveau)
-table(sexe) # ordre alphabétque des modalités
-table(sex)   # ordre des codages numériques
+table(sexe) # ordre alphabÃ©tque des modalitÃ©s
+table(sex)   # ordre des codages numÃ©riques
 
-factor(niveau)  # garde seulement les modalités présentes dans le vecteur des données
+factor(niveau)  # garde seulement les modalitÃ©s prÃ©sentes dans le vecteur des donnÃ©es
 levels(factor(niveau))
 
-# vecteurs de caractères et facteurs
+# vecteurs de caractÃ¨res et facteurs
 sx=c("m","f","f","f");mode(sx)
 is.factor(sx);is.character(sx)
 levels(sx)
 barplot(table(sexe),main=" graphe avec facteur")
-barplot(table(sx), main="graph avec vecteur de caractères")
+barplot(table(sx), main="graph avec vecteur de caractÃ¨res")
 plot(sexe, main="plot sur facteur")
-plot(sx) # plot sur vecteur de caractères ne donne rien
+plot(sx) # plot sur vecteur de caractÃ¨res ne donne rien
 
 
 # conversion
