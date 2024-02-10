@@ -1,0 +1,774 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\title{TD1 - Analyse en Composantes Principales sur les données de
+fertilité en Europe}
+\author{Courtenay Rebecca \& Ducros Chloé \& Lasson Marie}
+\date{}
+
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={TD1 - Analyse en Composantes Principales sur les données de fertilité en Europe},
+  pdfauthor={Courtenay Rebecca \& Ducros Chloé \& Lasson Marie},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\hypertarget{pruxe9sentation}{%
+\section{Présentation}\label{pruxe9sentation}}
+
+On s'intéresse à la fertilité des femmes en Europe en 2012. Pour cela,
+on a construit un tableau de données avec 39 Pays d'Europe en lignes et
+en colonnes les tranches d'âge 15-19, 20-24, 25-29, 30-34, 35-39, 40 et
+plus. Dans une case du tableau on a la fertilité moyenne des femmes d'un
+pays pour une tranche d'âge. La fertilité correspond ici au nombre moyen
+d'enfants nés vivants pour 1000 femmes. Pour répondre à l'ensemble des
+questions, il vous faudra mettre en oeuvre une ACP à partir des données
+fournies dans le fichier ``AnaDo\_JeuDonnees\_FertiliteEurope.csv''
+
+Il vous est demandé de fournir un rapport répondant aux questions
+posées. Dans ce rapport, chaque étape de votre code devra être indiquée
+: chargement de la librairie de l'ACP, chargement des données, affichage
+des graphes et des données permettant de répondre aux questions, etc.
+
+Pour fournir le rapport, vous pouvez au choix : compléter ce fichier et
+le compiler pour créer le PDF avec les réponses ; ou bien créer votre
+propre rapport répondant aux questions. Dans les deux cas, les étapes
+vous permettant de répondre aux questions devront apparaître (chargement
+des données, affichage des graphes, \ldots)
+
+\hypertarget{questions}{%
+\section{Questions}\label{questions}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\item
+  Importer les données et en faire l'ACP. Dans ce jeu de données, que
+  représentent les individus et que représentent les variables ?
+\item
+  En analysant les deux graphes générés par l'ACP de la question 1),
+  indiquer :
+
+  \begin{enumerate}
+  \def\labelenumii{\alph{enumii}.}
+  \item
+    Quelle est la variable la plus liée à la dimension 2 ?
+  \item
+    Quel pays a le taux de fertilité le plus élevé pour la classe 20-24
+    ans ?
+  \item
+    Que peut-on dire du taux de fertilité à tout âge des Danoises et des
+    Hollandaises ?
+  \item
+    Que peut-on dire du taux de fertilité des Irlandaises
+    comparativement aux autres pays d'Europe ?
+  \item
+    Citer quatre pays ayant un taux de fertilité très proche pour toutes
+    les classes d'âge.
+  \item
+    Le taux de fertilité (pour toutes les classes d'âge) des Croates
+    est-il proche de 0 ou proche du taux de fertilité moyen des pays
+    d'Europe ?
+  \item
+    Que peut-on dire sur la fertilité des femmes de plus de 35 ans dans
+    les pays où la fertilité des adolescentes est faible ?
+  \end{enumerate}
+\item
+  En utilisant la fonction \texttt{summary}, indiquer le pourcentage
+  d'inertie associé au plan principal. Ensuite, indiquer quel est le
+  pays ayant le plus contribué à la création de l'axe 1, puis quels sont
+  les trois pays ayant le plus contribué à la création de l'axe 2. Bien
+  montrer la table des résultats ayant permis de répondre à cette
+  question.
+\item
+  En utilisant la fonction \texttt{plot}, tracer le graphe des individus
+  et des variables sur les dimensions 3 et 4.
+\item
+  En utilisant la fonction \texttt{dimdesc}, indiquer quelles sont les
+  quatre variables ayant un taux de corrélation (positif ou négatif) de
+  plus de 0.8 avec la première dimension.
+\item
+  Quels sont les 6 individus ayant le plus contribué à la construction
+  du plan (sur les dimensions 1-2) ? Bonus : tracer un graphique pour
+  répondre à cette question.
+\item
+  Tracer le cercle des corrélations sur les dimensions 1 et 2 en y
+  affichant les deux variables ayant le plus contribué.
+\item
+  Faire l'ACP avec la variable supplémentaire ``Région'' puis tracer le
+  graphe des individus sur les dimensions 1 et 2 avec le coloriage en
+  fonction de la région. Sur ce graphe, ne sélectionner que les indivus
+  qui ont une qualité de projection supérieure à 0.95. Comparer la
+  région Europe de l'Est à la région Europe du Nord.
+\end{enumerate}
+
+\hypertarget{template}{%
+\section{Template}\label{template}}
+
+\hypertarget{chargement-de-la-librairie}{%
+\subsection{Chargement de la
+librairie}\label{chargement-de-la-librairie}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(FactoMineR)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{importation-des-donnuxe9es-et-affichage-des-graphes}{%
+\subsection{1.Importation des données et affichage des
+graphes}\label{importation-des-donnuxe9es-et-affichage-des-graphes}}
+
+On importe dans un premier temps les données de fertilité en Europe.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{donnees }\OtherTok{=} \FunctionTok{read.csv}\NormalTok{(}\AttributeTok{file =} \StringTok{"AnaDo\_JeuDonnees\_FertiliteEurope.csv"}\NormalTok{, }\AttributeTok{sep =} \StringTok{";"}\NormalTok{, }\AttributeTok{dec =} \StringTok{"."}\NormalTok{, }
+                   \AttributeTok{header=}\ConstantTok{TRUE}\NormalTok{, }\AttributeTok{row.names =} \DecValTok{1}\NormalTok{)}
+\FunctionTok{head}\NormalTok{(donnees)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                    X15.19 X20.24 X25.29 X30.34 X35.39 X40.et..       Région
+## Albanie              20.8  107.1  126.7   72.3   24.4      5.5   Europe sud
+## Allemagne             8.0   36.4   78.9   94.6   50.9      9.3 Europe Ouest
+## Autriche              8.6   44.5   89.2   94.6   46.8      9.6 Europe Ouest
+## Belgique              9.0   52.6  127.0  116.6   48.3      9.6 Europe Ouest
+## Biélorussie          21.4   90.4  106.7   67.6   26.0      4.4   Europe est
+## Bosnie-Herzégovine   11.0   52.5   91.8   69.7   25.7      4.7   Europe sud
+\end{verbatim}
+
+Les individus concernés sont les femmes. Elles sont classées selon les
+pays et les régions d'Europe dans lesquelles elles se trouvent mais
+aussi dans la tranche d'âge. Ainsi, pour chaque tranche d'âge nous avons
+la moyenne de la fertilité des femmes dans leur pays respectif. On peut
+voir qu'il y a de deux variables qualitatives et 6 variables
+quantitatives. Les 2 variables quantitatives sont :
+
+Pays
+
+Région
+
+Les 4 variables qualitatives sont :
+
+15-19
+
+20-24
+
+25-29
+
+30-34
+
+35-39
+
+40+
+
+On fait l'ACP de ces données.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Il faut enlever les valeurs quantitatives }
+\NormalTok{p }\OtherTok{\textless{}{-}} \FunctionTok{ncol}\NormalTok{(donnees)}
+\NormalTok{n }\OtherTok{\textless{}{-}} \FunctionTok{nrow}\NormalTok{(donnees)}
+
+\NormalTok{nouveauDonnees }\OtherTok{\textless{}{-}}\NormalTok{ donnees[,}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\SpecialCharTok{:}\NormalTok{p}\DecValTok{{-}1}\NormalTok{)]}
+\NormalTok{acp }\OtherTok{\textless{}{-}} \FunctionTok{PCA}\NormalTok{(nouveauDonnees);acp}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Template_TD1_ACP_files/figure-latex/unnamed-chunk-3-1.pdf}
+\includegraphics{Template_TD1_ACP_files/figure-latex/unnamed-chunk-3-2.pdf}
+
+\begin{verbatim}
+## **Results for the Principal Component Analysis (PCA)**
+## The analysis was performed on 39 individuals, described by 6 variables
+## *The results are available in the following objects:
+## 
+##    name               description                          
+## 1  "$eig"             "eigenvalues"                        
+## 2  "$var"             "results for the variables"          
+## 3  "$var$coord"       "coord. for the variables"           
+## 4  "$var$cor"         "correlations variables - dimensions"
+## 5  "$var$cos2"        "cos2 for the variables"             
+## 6  "$var$contrib"     "contributions of the variables"     
+## 7  "$ind"             "results for the individuals"        
+## 8  "$ind$coord"       "coord. for the individuals"         
+## 9  "$ind$cos2"        "cos2 for the individuals"           
+## 10 "$ind$contrib"     "contributions of the individuals"   
+## 11 "$call"            "summary statistics"                 
+## 12 "$call$centre"     "mean of the variables"              
+## 13 "$call$ecart.type" "standard error of the variables"    
+## 14 "$call$row.w"      "weights for the individuals"        
+## 15 "$call$col.w"      "weights for the variables"
+\end{verbatim}
+
+\hypertarget{interpruxe9tation-de-lacp}{%
+\subsection{2.Interprétation de l'ACP}\label{interpruxe9tation-de-lacp}}
+
+\begin{verbatim}
+a. 
+\end{verbatim}
+
+La variable la plus liée à la dimension 2 est : 25-29.
+
+\begin{verbatim}
+b. 
+\end{verbatim}
+
+Le taux de fertilité le plus élevé pour la classe 20-24 semble être
+l'Albanie.
+
+\begin{verbatim}
+c.
+\end{verbatim}
+
+Le taux de fertilité à tout âge des Danoises et des Hollandaises
+semblent être, en moyenne, la même. En effet, les deux points sont
+proches l'un de l'autre. Il est donc probable que les variables des
+individus soient très similaires.
+
+\begin{verbatim}
+d.
+\end{verbatim}
+
+D'après le graphique des variables, on remarque que l'Irlande est plus
+impacté par la dim 1 alors qu'il ne l'est pas du tout par la dim 2. Il
+est donc corrélé par l'axe 1. Nous remarquons également que plus nous
+allons à droite plus nous avons une représentation des femmes âgées
+tandis que si nous allons vers le côté gauche, nous avons une
+représentation des femmes jeunes. Donc l'Irlande, qui a son point sur la
+dimension 1 du côté droit, a un taux de fertilité qui est généralement
+plus fréquent chez les femmes ayant minimum 30 ans.
+
+\begin{verbatim}
+e.
+\end{verbatim}
+
+Estonie, Croatie, République-Tchèque et Lettonie.
+
+\begin{verbatim}
+f.
+\end{verbatim}
+
+Le taux de fertilité des Croates est proche du taux de fertilitié moyen
+des pays d'Europe car les valeurs sont centrées sur une valeur moyenne.
+
+\begin{verbatim}
+g.
+\end{verbatim}
+
+La fertilité des femmes de plus de 35 ans est forte dans les pays où la
+fertilité des adolescentes est faible. En effet, la classe 15-19 a une
+corrélation négative alors que les classes 35+ ont une corrélation
+positive: ces classes sont très corrélées mais dans un sens inverse. Ils
+sont donc opposés.
+
+\hypertarget{pourcentage-dinertie-du-plan-principal}{%
+\subsection{3.Pourcentage d'inertie du plan
+principal}\label{pourcentage-dinertie-du-plan-principal}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(acp, }\AttributeTok{nbelements =} \ConstantTok{Inf}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## PCA(X = nouveauDonnees) 
+## 
+## 
+## Eigenvalues
+##                        Dim.1   Dim.2   Dim.3   Dim.4   Dim.5   Dim.6
+## Variance               3.702   1.360   0.677   0.206   0.046   0.009
+## % of var.             61.704  22.665  11.287   3.427   0.772   0.145
+## Cumulative % of var.  61.704  84.369  95.656  99.084  99.855 100.000
+## 
+## Individuals
+##                        Dist    Dim.1    ctr   cos2    Dim.2    ctr   cos2  
+## Albanie            |  3.883 | -2.879  5.742  0.550 |  2.435 11.182  0.393 |
+## Allemagne          |  1.704 |  0.843  0.492  0.244 | -1.355  3.459  0.632 |
+## Autriche           |  1.007 |  0.567  0.222  0.317 | -0.647  0.789  0.413 |
+## Belgique           |  2.141 |  0.937  0.608  0.192 |  1.730  5.643  0.653 |
+## Biélorussie        |  2.990 | -2.762  5.283  0.853 |  0.964  1.751  0.104 |
+## Bosnie-Herzégovine |  2.073 | -1.425  1.406  0.472 | -0.670  0.846  0.104 |
+## Bulgarie           |  3.870 | -3.359  7.816  0.754 | -0.338  0.216  0.008 |
+## Croatie            |  0.651 | -0.244  0.041  0.140 |  0.043  0.004  0.004 |
+## Danemark           |  2.352 |  1.989  2.740  0.715 |  0.774  1.131  0.108 |
+## Espagne            |  3.293 |  1.818  2.290  0.305 | -2.637 13.110  0.641 |
+## Estonie            |  0.537 | -0.086  0.005  0.026 |  0.086  0.014  0.026 |
+## Finlande           |  1.729 |  1.569  1.704  0.823 |  0.697  0.916  0.163 |
+## France             |  2.894 |  1.726  2.063  0.356 |  2.293  9.911  0.628 |
+## Grèce              |  1.950 |  0.998  0.690  0.262 | -1.617  4.932  0.688 |
+## Hongrie            |  1.674 | -0.630  0.275  0.142 | -1.478  4.121  0.780 |
+## Irlande            |  5.081 |  4.133 11.828  0.662 | -0.049  0.005  0.000 |
+## Islande            |  2.724 |  2.096  3.043  0.592 |  1.686  5.362  0.383 |
+## Italie             |  2.809 |  2.064  2.950  0.540 | -1.698  5.438  0.366 |
+## Lettonie           |  0.842 | -0.422  0.124  0.252 | -0.339  0.216  0.162 |
+## Lituanie           |  1.588 | -0.778  0.419  0.240 |  0.896  1.515  0.319 |
+## Luxembourg         |  1.943 |  1.754  2.130  0.815 | -0.754  1.072  0.151 |
+## Macédoine          |  2.135 | -2.031  2.857  0.905 |  0.449  0.380  0.044 |
+## Malte              |  1.280 | -0.216  0.032  0.029 | -0.924  1.611  0.521 |
+## Moldavie           |  3.699 | -3.501  8.490  0.896 | -1.006  1.906  0.074 |
+## Monténégro         |  1.546 | -0.523  0.190  0.115 |  1.299  3.180  0.706 |
+## Norvège            |  2.085 |  1.647  1.879  0.624 |  1.134  2.424  0.296 |
+## Pays-Bas           |  2.635 |  2.142  3.178  0.661 |  0.655  0.808  0.062 |
+## Pologne            |  1.395 | -1.089  0.821  0.610 | -0.520  0.509  0.139 |
+## Portugal           |  1.906 |  0.157  0.017  0.007 | -1.876  6.634  0.968 |
+## Rép. Tchèque       |  1.199 |  0.003  0.000  0.000 | -0.454  0.388  0.143 |
+## Roumanie           |  3.403 | -3.052  6.452  0.805 | -0.455  0.391  0.018 |
+## Royaume-Uni        |  2.181 |  1.251  1.083  0.329 |  0.921  1.599  0.178 |
+## Russie             |  2.727 | -2.403  3.998  0.776 |  0.836  1.317  0.094 |
+## Serbie             |  1.450 | -1.416  1.390  0.954 |  0.246  0.114  0.029 |
+## Slovaquie          |  1.763 | -1.398  1.353  0.628 | -0.945  1.683  0.287 |
+## Slovénie           |  1.611 |  0.780  0.421  0.234 |  0.453  0.387  0.079 |
+## Suède              |  3.014 |  2.739  5.195  0.826 |  1.228  2.844  0.166 |
+## Suisse             |  2.529 |  2.246  3.493  0.789 | -1.078  2.190  0.182 |
+## Ukraine            |  3.376 | -3.242  7.277  0.922 |  0.013  0.000  0.000 |
+##                     Dim.3    ctr   cos2  
+## Albanie             0.292  0.322  0.006 |
+## Allemagne          -0.516  1.007  0.092 |
+## Autriche           -0.473  0.846  0.220 |
+## Belgique           -0.750  2.128  0.123 |
+## Biélorussie         0.085  0.028  0.001 |
+## Bosnie-Herzégovine -1.257  5.983  0.368 |
+## Bulgarie            1.212  5.560  0.098 |
+## Croatie            -0.578  1.265  0.789 |
+## Danemark           -0.919  3.197  0.153 |
+## Espagne             0.671  1.704  0.042 |
+## Estonie             0.382  0.553  0.507 |
+## Finlande            0.046  0.008  0.001 |
+## France              0.098  0.036  0.001 |
+## Grèce              -0.291  0.322  0.022 |
+## Hongrie            -0.127  0.061  0.006 |
+## Irlande             2.948 32.905  0.337 |
+## Islande             0.429  0.696  0.025 |
+## Italie              0.552  1.152  0.039 |
+## Lettonie            0.248  0.233  0.087 |
+## Lituanie           -0.904  3.092  0.324 |
+## Luxembourg          0.098  0.037  0.003 |
+## Macédoine          -0.438  0.725  0.042 |
+## Malte              -0.413  0.647  0.104 |
+## Moldavie            0.293  0.325  0.006 |
+## Monténégro          0.122  0.056  0.006 |
+## Norvège            -0.532  1.071  0.065 |
+## Pays-Bas           -1.096  4.550  0.173 |
+## Pologne            -0.578  1.266  0.172 |
+## Portugal           -0.267  0.270  0.020 |
+## Rép. Tchèque       -1.047  4.154  0.763 |
+## Roumanie            1.004  3.814  0.087 |
+## Royaume-Uni         1.507  8.601  0.477 |
+## Russie              0.962  3.501  0.124 |
+## Serbie              0.101  0.039  0.005 |
+## Slovaquie          -0.258  0.253  0.021 |
+## Slovénie           -1.330  6.696  0.681 |
+## Suède               0.195  0.143  0.004 |
+## Suisse             -0.276  0.289  0.012 |
+## Ukraine             0.807  2.466  0.057 |
+## 
+## Variables
+##                       Dim.1    ctr   cos2    Dim.2    ctr   cos2    Dim.3
+## X15.19             | -0.831 18.668  0.691 | -0.024  0.042  0.001 |  0.455
+## X20.24             | -0.728 14.319  0.530 |  0.533 20.899  0.284 |  0.358
+## X25.29             |  0.041  0.046  0.002 |  0.979 70.413  0.958 | -0.168
+## X30.34             |  0.908 22.280  0.825 |  0.342  8.591  0.117 | -0.060
+## X35.39             |  0.942 23.981  0.888 |  0.026  0.049  0.001 |  0.322
+## X40.et..           |  0.876 20.705  0.767 | -0.008  0.005  0.000 |  0.454
+##                       ctr   cos2  
+## X15.19             30.562  0.207 |
+## X20.24             18.973  0.128 |
+## X25.29              4.154  0.028 |
+## X30.34              0.539  0.004 |
+## X35.39             15.304  0.104 |
+## X40.et..           30.468  0.206 |
+\end{verbatim}
+
+Le pourcentage d'inertie associé au plan principal est : 84.36911\%.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{acp}\SpecialCharTok{$}\NormalTok{eig}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         eigenvalue percentage of variance cumulative percentage of variance
+## comp 1 3.702253939             61.7042323                          61.70423
+## comp 2 1.359892659             22.6648777                          84.36911
+## comp 3 0.677217935             11.2869656                          95.65608
+## comp 4 0.205646734              3.4274456                          99.08352
+## comp 5 0.046294862              0.7715810                          99.85510
+## comp 6 0.008693871              0.1448978                         100.00000
+\end{verbatim}
+
+Axe1 : Irlande (11.828) Axe2 : Espagne (13.110), Albanie (11.182),
+France (9.911)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{acp}\SpecialCharTok{$}\NormalTok{ind}\SpecialCharTok{$}\NormalTok{contrib}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                           Dim.1        Dim.2        Dim.3        Dim.4
+## Albanie            5.742210e+00 1.118242e+01  0.321820976 9.330586e+00
+## Allemagne          4.916964e-01 3.459449e+00  1.007235535 1.020979e-01
+## Autriche           2.222922e-01 7.888806e-01  0.846050562 5.752118e-01
+## Belgique           6.079461e-01 5.642806e+00  2.127579526 1.221312e+00
+## Biélorussie        5.283230e+00 1.750919e+00  0.027573307 3.667731e+00
+## Bosnie-Herzégovine 1.405588e+00 8.457253e-01  5.983087742 2.772611e+00
+## Bulgarie           7.816444e+00 2.155357e-01  5.559918286 2.603839e+01
+## Croatie            4.110323e-02 3.539326e-03  1.265155050 3.137510e-01
+## Danemark           2.740358e+00 1.130847e+00  3.197048603 1.620986e+00
+## Espagne            2.289882e+00 1.311049e+01  1.703669119 1.643068e+00
+## Estonie            5.135330e-03 1.391644e-02  0.553332766 1.971515e-01
+## Finlande           1.704490e+00 9.162448e-01  0.008033388 4.775301e-01
+## France             2.063421e+00 9.910815e+00  0.036205853 5.813942e-01
+## Grèce              6.902389e-01 4.932169e+00  0.321658872 4.672534e-01
+## Hongrie            2.751937e-01 4.121389e+00  0.060726566 2.517531e+00
+## Irlande            1.182844e+01 4.617105e-03 32.905006761 1.968052e-01
+## Islande            3.043349e+00 5.361999e+00  0.696113428 9.985601e-04
+## Italie             2.949766e+00 5.438278e+00  1.152388008 4.015745e+00
+## Lettonie           1.235036e-01 2.164148e-01  0.233248029 1.828058e+00
+## Lituanie           4.193486e-01 1.514723e+00  3.091989591 1.607663e-01
+## Luxembourg         2.130304e+00 1.072335e+00  0.036733589 3.774505e-01
+## Macédoine          2.856731e+00 3.802827e-01  0.725144278 1.330208e-01
+## Malte              3.241266e-02 1.611012e+00  0.647298885 6.872285e+00
+## Moldavie           8.489856e+00 1.906405e+00  0.324769009 3.632156e+00
+## Monténégro         1.895961e-01 3.179623e+00  0.056297785 4.401554e+00
+## Norvège            1.878574e+00 2.423888e+00  1.071281202 3.515673e-01
+## Pays-Bas           3.178394e+00 8.082201e-01  4.549517907 6.048351e+00
+## Pologne            8.213031e-01 5.089875e-01  1.265575104 6.492874e-01
+## Portugal           1.706368e-02 6.634490e+00  0.270251525 2.046935e-01
+## Rép. Tchèque       6.287958e-06 3.878109e-01  4.154112145 1.147847e+00
+## Roumanie           6.452351e+00 3.905264e-01  3.814179852 1.280720e+01
+## Royaume-Uni        1.083363e+00 1.598936e+00  8.601102886 7.410663e-01
+## Russie             3.997939e+00 1.317363e+00  3.500521675 2.810967e-01
+## Serbie             1.389523e+00 1.142734e-01  0.038507919 9.983192e-02
+## Slovaquie          1.352885e+00 1.682571e+00  0.252890968 2.407451e+00
+## Slovénie           4.208368e-01 3.874167e-01  6.695950317 1.623547e-02
+## Suède              5.194648e+00 2.844148e+00  0.143306326 2.905404e-01
+## Suisse             3.493297e+00 2.190199e+00  0.288906672 2.046965e-01
+## Ukraine            7.277283e+00 3.347046e-04  2.465809987 1.604696e+00
+##                           Dim.5
+## Albanie            8.683907e-01
+## Allemagne          2.946085e+00
+## Autriche           1.945865e-01
+## Belgique           2.847246e+00
+## Biélorussie        4.057238e+00
+## Bosnie-Herzégovine 9.238590e-01
+## Bulgarie           8.719383e-01
+## Croatie            1.511772e-01
+## Danemark           1.649746e-02
+## Espagne            2.804208e-02
+## Estonie            5.825488e+00
+## Finlande           7.228573e-02
+## France             4.096185e+00
+## Grèce              2.358690e+00
+## Hongrie            1.235717e-01
+## Irlande            1.756255e-01
+## Islande            9.523625e-03
+## Italie             5.966154e+00
+## Lettonie           1.098573e+01
+## Lituanie           1.421425e+01
+## Luxembourg         2.544759e+00
+## Macédoine          1.589868e+00
+## Malte              1.120095e-01
+## Moldavie           1.992433e+00
+## Monténégro         2.362191e+00
+## Norvège            1.455343e+00
+## Pays-Bas           1.205145e+01
+## Pologne            5.282008e+00
+## Portugal           7.752790e-05
+## Rép. Tchèque       1.575511e+00
+## Roumanie           1.034046e+00
+## Royaume-Uni        8.095398e-01
+## Russie             1.014979e+00
+## Serbie             6.569832e-01
+## Slovaquie          2.684412e-02
+## Slovénie           2.500553e-01
+## Suède              4.075717e-01
+## Suisse             4.330877e+00
+## Ukraine            5.770889e+00
+\end{verbatim}
+
+\hypertarget{graphe-sur-les-dimensions-3-et-4}{%
+\subsection{4.Graphe sur les dimensions 3 et
+4}\label{graphe-sur-les-dimensions-3-et-4}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(acp, }\AttributeTok{axes =} \FunctionTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{4}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Template_TD1_ACP_files/figure-latex/unnamed-chunk-7-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(acp, }\AttributeTok{axes =} \FunctionTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{4}\NormalTok{), }\AttributeTok{choix=}\StringTok{\textquotesingle{}var\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Template_TD1_ACP_files/figure-latex/unnamed-chunk-7-2.pdf}
+
+\hypertarget{variables-corruxe9luxe9es-uxe0-la-premiuxe8re-dimension}{%
+\subsection{5.Variables corrélées à la première
+dimension}\label{variables-corruxe9luxe9es-uxe0-la-premiuxe8re-dimension}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{dimdesc}\NormalTok{(acp, }\AttributeTok{axes =} \DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $Dim.1
+## $quanti
+##          correlation      p.value
+## X35.39     0.9422466 3.648887e-19
+## X30.34     0.9082239 1.433901e-15
+## X40.et..   0.8755389 3.021708e-13
+## X20.24    -0.7280993 1.496018e-07
+## X15.19    -0.8313477 5.634938e-11
+## 
+## attr(,"class")
+## [1] "condes" "list"  
+## 
+## $call
+## $call$num.var
+## [1] 1
+## 
+## $call$proba
+## [1] 0.05
+## 
+## $call$weights
+##  [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+## [39] 1
+## 
+## $call$X
+##                           Dim.1 X15.19 X20.24 X25.29 X30.34 X35.39 X40.et..
+## Albanie            -2.879419548   20.8  107.1  126.7   72.3   24.4      5.5
+## Allemagne           0.842585388    8.0   36.4   78.9   94.6   50.9      9.3
+## Autriche            0.566536039    8.6   44.5   89.2   94.6   46.8      9.6
+## Belgique            0.936910183    9.0   52.6  127.0  116.6   48.3      9.6
+## Biélorussie        -2.761946002   21.4   90.4  106.7   67.6   26.0      4.4
+## Bosnie-Herzégovine -1.424604825   11.0   52.5   91.8   69.7   25.7      4.7
+## Bulgarie           -3.359464201   42.1   71.9   90.9   67.1   27.2      4.7
+## Croatie            -0.243614629   11.4   54.6   99.1   91.4   39.9      7.8
+## Danemark            1.989156842    4.4   37.3  112.9  125.0   55.5     10.8
+## Espagne             1.818326879    8.9   29.2   57.6   91.2   62.4     14.9
+## Estonie            -0.086109202   16.1   57.9   99.6   87.0   46.6     10.9
+## Finlande            1.568782205    7.3   52.0  107.5  112.3   58.0     12.8
+## France              1.726073787    9.5   59.3  132.1  127.0   58.3     13.4
+## Grèce               0.998309325    8.5   32.6   76.5   91.6   47.8     11.7
+## Hongrie            -0.630354215   19.2   41.9   77.9   81.5   39.3      7.7
+## Irlande             4.132654402   12.1   51.1   87.8  130.3   97.5     23.8
+## Islande             2.096241442    8.1   58.3  120.5  126.0   65.0     14.4
+## Italie              2.063759847    6.4   33.4   73.2   95.3   61.1     16.2
+## Lettonie           -0.422284634   15.4   57.1   93.8   78.7   40.3     10.8
+## Lituanie           -0.778131530   14.0   55.4  117.3   86.5   34.1      6.6
+## Luxembourg          1.753824803    7.0   41.3   84.3  110.3   57.3     13.2
+## Macédoine          -2.030954064   19.0   72.1  103.0   76.5   27.8      4.4
+## Malte              -0.216332974   17.8   39.4   87.1   92.8   42.9      7.1
+## Moldavie           -3.501189071   25.7   80.0   78.4   46.1   19.9      3.8
+## Monténégro         -0.523214971   13.3   74.6  114.9   89.8   39.4     10.1
+## Norvège             1.646946571    6.1   48.9  115.1  122.2   57.0     10.7
+## Pays-Bas            2.142245544    4.5   35.3  108.4  136.7   55.8      9.6
+## Pologne            -1.088973075   14.7   53.1   93.7   73.0   32.7      6.9
+## Portugal            0.156964591   12.0   37.5   71.4   82.8   43.4      9.5
+## Rép. Tchèque        0.003013146   11.0   42.1   93.4   98.9   38.0      6.7
+## Roumanie           -3.052280092   37.3   70.8   89.3   65.5   27.8      5.3
+## Royaume-Uni         1.250697949   18.1   65.4  105.1  114.6   65.2     14.8
+## Russie             -2.402611253   26.9   89.3  103.7   71.9   33.6      7.0
+## Serbie             -1.416440335   20.6   68.4   99.0   83.2   34.5      6.9
+## Slovaquie          -1.397641621   21.3   51.1   85.2   77.9   32.1      6.0
+## Slovénie            0.779511048    4.5   43.8  108.2  106.8   44.4      7.7
+## Suède               2.738693839    5.5   47.7  114.3  134.1   67.6     14.9
+## Suisse              2.245862331    3.5   31.7   81.9  111.6   63.0     12.5
+## Ukraine            -3.241529918   28.0   90.6   90.2   58.9   25.2      5.1
+\end{verbatim}
+
+Les quatre variables ayant un taux de corrélation de plus de 0.8 à la
+première dimension sont :
+
+15-19
+
+30-34
+
+35-39
+
+40 et..
+
+\hypertarget{individus-contribuant-le-plus-uxe0-la-cruxe9ation-du-plan}{%
+\subsection{6.Individus contribuant le plus à la création du
+plan}\label{individus-contribuant-le-plus-uxe0-la-cruxe9ation-du-plan}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{acp2 }\OtherTok{\textless{}{-}} \FunctionTok{PCA}\NormalTok{(nouveauDonnees,}\AttributeTok{ncp=}\DecValTok{2}\NormalTok{,}\AttributeTok{graph=}\ConstantTok{FALSE}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(acp2,}\AttributeTok{invisible=}\FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}ind.sup\textquotesingle{}}\NormalTok{),}\AttributeTok{select=}\StringTok{\textquotesingle{}contrib  6\textquotesingle{}}\NormalTok{,}\AttributeTok{habillage=}\StringTok{\textquotesingle{}contrib\textquotesingle{}}\NormalTok{,}
+     \AttributeTok{title=}\StringTok{"Six individus ayant contribué à la création du plan"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Template_TD1_ACP_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+Les six individus ayant le plus contribué à la création du plan sont:
+Irlande, Espagne, Moldavie, Bulgarie, Ukraine et Alabnie.
+
+\hypertarget{cercle-des-corruxe9lations}{%
+\subsection{7.Cercle des
+corrélations}\label{cercle-des-corruxe9lations}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(acp2,}\AttributeTok{choix=}\StringTok{\textquotesingle{}var\textquotesingle{}}\NormalTok{,}\AttributeTok{select=}\StringTok{\textquotesingle{}contrib  2\textquotesingle{}}\NormalTok{,}\AttributeTok{unselect=}\DecValTok{0}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Template_TD1_ACP_files/figure-latex/unnamed-chunk-10-1.pdf}
+Les deux tranches d'âge qui ont le plus contribué sont 25-29 ans et
+30-34 ans.
+
+\hypertarget{graphique-final}{%
+\subsection{8.Graphique final}\label{graphique-final}}
+
+Faire l'ACP avec la variable supplémentaire ``Région'' puis tracer le
+graphe des individus sur les dimensions 1 et 2 avec le coloriage en
+fonction de la région. Sur ce graphe, ne sélectionner que les indivus
+qui ont une qualité de projection supérieure à 0.95.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{acp3}\OtherTok{\textless{}{-}}\FunctionTok{PCA}\NormalTok{(donnees,}\AttributeTok{ncp=}\DecValTok{2}\NormalTok{,}\AttributeTok{quali.sup=}\FunctionTok{c}\NormalTok{(}\DecValTok{7}\NormalTok{),}\AttributeTok{graph=}\ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(acp3,}\AttributeTok{invisible=}\FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}quali\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}ind.sup\textquotesingle{}}\NormalTok{),}\AttributeTok{habillage=}\DecValTok{7}\NormalTok{,}
+     \AttributeTok{title=}\StringTok{"Graphe des individus de l\textquotesingle{}ACP"}\NormalTok{,}\AttributeTok{select=}\StringTok{\textquotesingle{}cos2  0.95\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Template_TD1_ACP_files/figure-latex/unnamed-chunk-12-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(acp3,}\AttributeTok{invisible=}\FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}ind\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}ind.sup\textquotesingle{}}\NormalTok{),}\AttributeTok{select=}\StringTok{\textquotesingle{}contrib  39\textquotesingle{}}\NormalTok{,}
+     \AttributeTok{habillage=}\DecValTok{7}\NormalTok{,}\AttributeTok{title=}\StringTok{"Graphe des individus de l\textquotesingle{}ACP"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Template_TD1_ACP_files/figure-latex/unnamed-chunk-13-1.pdf}
+L'Europe de l'Est et du Nord sont diamétralement opposées, d'après le
+graphique. Les femmes de l'Europe de l'Est ont un plus grand taux de
+fécondité lorsqu'elles sont jeunes. Contrairement aux femmes de l'Europe
+du Nord.
+
+\end{document}
