@@ -1,0 +1,549 @@
+<html xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<head>
+<title> R output </title>
+<link rel=stylesheet href="R2HTML.css" type=text/css>
+<object id="mathplayer" classid="clsid:32F66A20-7614-11D4-BD11-00104BD3F987"></object>
+<?import namespace="mml" implementation="#mathplayer"?>
+<script type="text/javascript" src="ASCIIMathML.js"></script>
+<link href="./runtime/styles/xp/grid.css" rel="stylesheet" type="text/css" ></link>
+<link href="gridR2HTML.css" rel="stylesheet" type="text/css" ></link>
+
+<script src="./runtime/lib/grid.js"></script>
+
+<script src="./gridR2HTML.js"></script>
+<script>
+   nequations=0;
+</script>
+</head>
+<body onload="translate()" bgcolor= FFFFFF >
+ <h1 > Rapport Décathlon 2016</h1>
+
+ <h2 > 1- Présentation des données</h2>
+
+<p class='character'>Les données étudiées proviennent de l'épreuve de Décathlon des jeux Olympiques de 2016. Le nombre d'athlètes ayant participé à la compétition est de : 24 . La Table suivante donne un aperçu du fichier de données :</p>
+
+
+<p align= center >
+<table cellspacing=0 border=1>
+<caption align=bottom class=captiondataframe></caption>
+<tr><td>
+	<table border=0 class=dataframe>
+	<tbody> 
+	<tr class= firstline > 
+		<th>&nbsp;  </th>
+		<th>Pays  </th>
+		<th>Total  </th>
+		<th>C100  </th>
+		<th>Long  </th>
+		<th>Poids  </th>
+		<th>Haut  </th>
+		<th>C400  </th>
+		<th>C110H  </th>
+		<th>Disque  </th>
+		<th>Perche  </th>
+		<th>Jav  </th>
+		<th>C1500</th> 
+	</tr> 
+<tr> 
+<td class=firstcolumn>Ashton Eaton
+</td>
+<td class=cellinside>Etats-Unis
+</td>
+<td class=cellinside>8893
+</td>
+<td class=cellinside>10
+</td>
+<td class=cellinside>7.9
+</td>
+<td class=cellinside>15
+</td>
+<td class=cellinside>2.0
+</td>
+<td class=cellinside>46
+</td>
+<td class=cellinside>14
+</td>
+<td class=cellinside>45
+</td>
+<td class=cellinside>5.2
+</td>
+<td class=cellinside>60
+</td>
+<td class=cellinside>263
+</td></tr>
+ 
+<tr> 
+<td class=firstcolumn>Kevin Mayer
+</td>
+<td class=cellinside>France
+</td>
+<td class=cellinside>8834
+</td>
+<td class=cellinside>11
+</td>
+<td class=cellinside>7.6
+</td>
+<td class=cellinside>16
+</td>
+<td class=cellinside>2.0
+</td>
+<td class=cellinside>48
+</td>
+<td class=cellinside>14
+</td>
+<td class=cellinside>47
+</td>
+<td class=cellinside>5.4
+</td>
+<td class=cellinside>65
+</td>
+<td class=cellinside>266
+</td></tr>
+ 
+<tr> 
+<td class=firstcolumn>Damian Warner
+</td>
+<td class=cellinside>Canada
+</td>
+<td class=cellinside>8666
+</td>
+<td class=cellinside>10
+</td>
+<td class=cellinside>7.7
+</td>
+<td class=cellinside>14
+</td>
+<td class=cellinside>2.0
+</td>
+<td class=cellinside>47
+</td>
+<td class=cellinside>14
+</td>
+<td class=cellinside>45
+</td>
+<td class=cellinside>4.7
+</td>
+<td class=cellinside>63
+</td>
+<td class=cellinside>265
+</td></tr>
+ 
+<tr> 
+<td class=firstcolumn>Kai Kazmirek
+</td>
+<td class=cellinside>Allemagne
+</td>
+<td class=cellinside>8580
+</td>
+<td class=cellinside>11
+</td>
+<td class=cellinside>7.7
+</td>
+<td class=cellinside>14
+</td>
+<td class=cellinside>2.1
+</td>
+<td class=cellinside>47
+</td>
+<td class=cellinside>15
+</td>
+<td class=cellinside>43
+</td>
+<td class=cellinside>5.0
+</td>
+<td class=cellinside>65
+</td>
+<td class=cellinside>271
+</td></tr>
+ 
+<tr> 
+<td class=firstcolumn>Larbi Bourrada
+</td>
+<td class=cellinside>Algerie
+</td>
+<td class=cellinside>8521
+</td>
+<td class=cellinside>11
+</td>
+<td class=cellinside>7.5
+</td>
+<td class=cellinside>14
+</td>
+<td class=cellinside>2.1
+</td>
+<td class=cellinside>48
+</td>
+<td class=cellinside>14
+</td>
+<td class=cellinside>42
+</td>
+<td class=cellinside>4.6
+</td>
+<td class=cellinside>66
+</td>
+<td class=cellinside>255
+</td></tr>
+ 
+<tr> 
+<td class=firstcolumn>Leonel Suarez
+</td>
+<td class=cellinside>Cuba
+</td>
+<td class=cellinside>8460
+</td>
+<td class=cellinside>11
+</td>
+<td class=cellinside>7.1
+</td>
+<td class=cellinside>14
+</td>
+<td class=cellinside>2.1
+</td>
+<td class=cellinside>48
+</td>
+<td class=cellinside>14
+</td>
+<td class=cellinside>47
+</td>
+<td class=cellinside>4.9
+</td>
+<td class=cellinside>72
+</td>
+<td class=cellinside>268
+</td></tr>
+ 
+	</tbody>
+</table>
+ </td></table>
+ <br>
+
+ <h2 > 2- Résultats des épreuves</h2>
+
+ <h3 > a. Les courses</h3>
+
+<p class='character'>Nous retrouvons dans la Table suivante, les valeurs moyennes des épreuves de courses du décathlon.</p>
+
+
+<p align= center >
+<table cellspacing=0 border=1>
+<caption align=bottom class=captiondataframe></caption>
+<tr><td>
+	<table border=0 class=dataframe>
+	<tbody> 
+	<tr class= firstline > 
+		<th>&nbsp;  </th>
+		<th>moyenne  </th>
+		<th>minimum  </th>
+		<th>maximum</th> 
+	</tr> 
+<tr> 
+<td class=firstcolumn>100m
+</td>
+<td class=cellinside> 10.91
+</td>
+<td class=cellinside> 10.30
+</td>
+<td class=cellinside> 11.32
+</td></tr>
+ 
+<tr> 
+<td class=firstcolumn>400m
+</td>
+<td class=cellinside> 48.96
+</td>
+<td class=cellinside> 46.07
+</td>
+<td class=cellinside> 51.08
+</td></tr>
+ 
+<tr> 
+<td class=firstcolumn>110mH
+</td>
+<td class=cellinside> 14.63
+</td>
+<td class=cellinside> 13.58
+</td>
+<td class=cellinside> 16.51
+</td></tr>
+ 
+<tr> 
+<td class=firstcolumn>1500m
+</td>
+<td class=cellinside>274.69
+</td>
+<td class=cellinside>254.60
+</td>
+<td class=cellinside>293.10
+</td></tr>
+ 
+	</tbody>
+</table>
+ </td></table>
+ <br>
+
+<p class='character'>Dans la figure suivante, on représente les distributions des quatre courses :</p>
+
+<p align=center><img src='figure1.PNG' border=1 width=500><br><i class=caption> Distribution des épreuves de courses </i>
+ <h3 > b. Les lancers</h3>
+
+<p class='character'>Voila un résumé des trois épreuves de lancers :</p>
+
+
+<p align= center >
+<table cellspacing=0 border=1>
+<caption align=bottom class=captiondataframe></caption>
+<tr><td>
+	<table border=0 class=dataframe>
+	<tbody> 
+	<tr class= firstline > 
+		<th>&nbsp;  </th>
+		<th>moyenne  </th>
+		<th>minimum  </th>
+		<th>maximum</th> 
+	</tr> 
+<tr> 
+<td class=firstcolumn>Poids
+</td>
+<td class=cellinside>13.56
+</td>
+<td class=cellinside> 0.00
+</td>
+<td class=cellinside>15.76
+</td></tr>
+ 
+<tr> 
+<td class=firstcolumn>Disque
+</td>
+<td class=cellinside>43.95
+</td>
+<td class=cellinside>34.91
+</td>
+<td class=cellinside>53.24
+</td></tr>
+ 
+<tr> 
+<td class=firstcolumn>Javelot
+</td>
+<td class=cellinside>61.28
+</td>
+<td class=cellinside>46.42
+</td>
+<td class=cellinside>72.32
+</td></tr>
+ 
+	</tbody>
+</table>
+ </td></table>
+ <br>
+
+<p class='character'>Dans la figure suivante, on représente les distributions des trois lancers :</p>
+
+<p align=center><img src='figure2.PNG' border=1 width=500><br><i class=caption> Distribution des épreuves de lancers </i>
+ <h3 > c. Les sauts</h3>
+
+<p class='character'>Voila un résumé des trois épreuves de saut :</p>
+
+
+<p align= center >
+<table cellspacing=0 border=1>
+<caption align=bottom class=captiondataframe></caption>
+<tr><td>
+	<table border=0 class=dataframe>
+	<tbody> 
+	<tr class= firstline > 
+		<th>&nbsp;  </th>
+		<th>moyenne  </th>
+		<th>minimum  </th>
+		<th>maximum</th> 
+	</tr> 
+<tr> 
+<td class=firstcolumn>Longueur
+</td>
+<td class=cellinside>7.31
+</td>
+<td class=cellinside>6.73
+</td>
+<td class=cellinside>7.94
+</td></tr>
+ 
+<tr> 
+<td class=firstcolumn>Hauteur
+</td>
+<td class=cellinside>2.03
+</td>
+<td class=cellinside>1.77
+</td>
+<td class=cellinside>2.19
+</td></tr>
+ 
+<tr> 
+<td class=firstcolumn>Perche
+</td>
+<td class=cellinside>4.86
+</td>
+<td class=cellinside>4.40
+</td>
+<td class=cellinside>5.40
+</td></tr>
+ 
+	</tbody>
+</table>
+ </td></table>
+ <br>
+
+<p class='character'>Dans la figure suivante, on représente les distributions des trois sauts :</p>
+
+<p align=center><img src='figure3.PNG' border=1 width=500><br><i class=caption> Distribution des épreuves de sauts </i>
+ <h2 > 3- Analyse des résultats</h2>
+
+ <h3 > a. Le podium</h3>
+
+<p class='character'>Damian Warner a obtenu le meilleur résultat sur l'épreuve du 100m, avec un temps de  10.3 .</p>
+
+<p class='character'>Ashton Eaton a terminé second, et  Zach Ziemek  troisième avec des temps respectifs de  10.46  et  10.71 .</p>
+
+ <h3 > b. Les similitudes entre épreuves</h3>
+
+<p class='character'>La table suivante représente la matrice de corrélation entre les différentes épreuves :</p>
+
+
+<p align= center >
+<table cellspacing=0 border=1><caption align=bottom class=captiondataframe></caption>
+<tr><td>
+	<table border=0 class=dataframe>
+	<tbody> <tr class= firstline > <th></th><th>C100</th><th>Long</th><th>Poids</th><th>Haut</th><th>C400</th><th>C110H</th><th>Disque</th><th>Perche</th><th>Jav</th><th>C1500</th> </tr>
+ <tr> 
+<tr><td class=firstcolumn>C100</td>
+<td class=cellinside> 1.00</td>
+<td class=cellinside>-0.44</td>
+<td class=cellinside>-0.22</td>
+<td class=cellinside> 0.12</td>
+<td class=cellinside> 0.65</td>
+<td class=cellinside> 0.41</td>
+<td class=cellinside>-0.07</td>
+<td class=cellinside> 0.23</td>
+<td class=cellinside> 0.11</td>
+<td class=cellinside> 0.34</td> </tr>
+ <tr> 
+<tr><td class=firstcolumn>Long</td>
+<td class=cellinside>-0.44</td>
+<td class=cellinside> 1.00</td>
+<td class=cellinside> 0.08</td>
+<td class=cellinside> 0.40</td>
+<td class=cellinside>-0.64</td>
+<td class=cellinside>-0.47</td>
+<td class=cellinside>-0.05</td>
+<td class=cellinside> 0.54</td>
+<td class=cellinside> 0.05</td>
+<td class=cellinside>-0.61</td> </tr>
+ <tr> 
+<tr><td class=firstcolumn>Poids</td>
+<td class=cellinside>-0.22</td>
+<td class=cellinside> 0.08</td>
+<td class=cellinside> 1.00</td>
+<td class=cellinside>-0.25</td>
+<td class=cellinside>-0.36</td>
+<td class=cellinside>-0.10</td>
+<td class=cellinside> 0.43</td>
+<td class=cellinside>-0.17</td>
+<td class=cellinside> 0.16</td>
+<td class=cellinside>-0.20</td> </tr>
+ <tr> 
+<tr><td class=firstcolumn>Haut</td>
+<td class=cellinside> 0.12</td>
+<td class=cellinside> 0.40</td>
+<td class=cellinside>-0.25</td>
+<td class=cellinside> 1.00</td>
+<td class=cellinside>-0.13</td>
+<td class=cellinside>-0.35</td>
+<td class=cellinside>-0.03</td>
+<td class=cellinside> 0.41</td>
+<td class=cellinside> 0.28</td>
+<td class=cellinside>-0.20</td> </tr>
+ <tr> 
+<tr><td class=firstcolumn>C400</td>
+<td class=cellinside> 0.65</td>
+<td class=cellinside>-0.64</td>
+<td class=cellinside>-0.36</td>
+<td class=cellinside>-0.13</td>
+<td class=cellinside> 1.00</td>
+<td class=cellinside> 0.68</td>
+<td class=cellinside> 0.13</td>
+<td class=cellinside>-0.08</td>
+<td class=cellinside>-0.14</td>
+<td class=cellinside> 0.66</td> </tr>
+ <tr> 
+<tr><td class=firstcolumn>C110H</td>
+<td class=cellinside> 0.41</td>
+<td class=cellinside>-0.47</td>
+<td class=cellinside>-0.10</td>
+<td class=cellinside>-0.35</td>
+<td class=cellinside> 0.68</td>
+<td class=cellinside> 1.00</td>
+<td class=cellinside> 0.23</td>
+<td class=cellinside>-0.21</td>
+<td class=cellinside>-0.33</td>
+<td class=cellinside> 0.44</td> </tr>
+ <tr> 
+<tr><td class=firstcolumn>Disque</td>
+<td class=cellinside>-0.07</td>
+<td class=cellinside>-0.05</td>
+<td class=cellinside> 0.43</td>
+<td class=cellinside>-0.03</td>
+<td class=cellinside> 0.13</td>
+<td class=cellinside> 0.23</td>
+<td class=cellinside> 1.00</td>
+<td class=cellinside>-0.02</td>
+<td class=cellinside> 0.41</td>
+<td class=cellinside> 0.32</td> </tr>
+ <tr> 
+<tr><td class=firstcolumn>Perche</td>
+<td class=cellinside> 0.23</td>
+<td class=cellinside> 0.54</td>
+<td class=cellinside>-0.17</td>
+<td class=cellinside> 0.41</td>
+<td class=cellinside>-0.08</td>
+<td class=cellinside>-0.21</td>
+<td class=cellinside>-0.02</td>
+<td class=cellinside> 1.00</td>
+<td class=cellinside> 0.00</td>
+<td class=cellinside>-0.12</td> </tr>
+ <tr> 
+<tr><td class=firstcolumn>Jav</td>
+<td class=cellinside> 0.11</td>
+<td class=cellinside> 0.05</td>
+<td class=cellinside> 0.16</td>
+<td class=cellinside> 0.28</td>
+<td class=cellinside>-0.14</td>
+<td class=cellinside>-0.33</td>
+<td class=cellinside> 0.41</td>
+<td class=cellinside> 0.00</td>
+<td class=cellinside> 1.00</td>
+<td class=cellinside> 0.08</td> </tr>
+ <tr> 
+<tr><td class=firstcolumn>C1500</td>
+<td class=cellinside> 0.34</td>
+<td class=cellinside>-0.61</td>
+<td class=cellinside>-0.20</td>
+<td class=cellinside>-0.20</td>
+<td class=cellinside> 0.66</td>
+<td class=cellinside> 0.44</td>
+<td class=cellinside> 0.32</td>
+<td class=cellinside>-0.12</td>
+<td class=cellinside> 0.08</td>
+<td class=cellinside> 1.00</td> </tr>
+ 
+	</tbody>
+</table>
+ </td></table>
+ <br>
+
+<p class='character'>La corrélation maximale est atteinte pour les variables C400  et  C110H . Sa valeur est de 0.68 . La figure suivante représente le nuage de points entre ces deux variables :</p>
+
+<p align=center><img src='figure4.png' border=1 width=500><br><i class=caption> Nuage de points des variables les plus corrélées </i>
+<hr size=1>
+<font size=-1>
+	 Generated on: <i>Thu Oct 04 10:04:06 2018</i> - <b>R2HTML</b> 
+<hr size=1>
+	</body>
+</html>
