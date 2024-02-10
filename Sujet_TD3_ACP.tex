@@ -1,0 +1,1218 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\title{TD3 - Implémentation de l'ACP}
+\author{Courtenay Rebecca \& Ducros Chloé \& Lasson Marie}
+\date{}
+
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={TD3 - Implémentation de l'ACP},
+  pdfauthor={Courtenay Rebecca \& Ducros Chloé \& Lasson Marie},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\hypertarget{question-pruxe9liminaires-bonus-3-points}{%
+\section{Question préliminaires (bonus, 3
+points)}\label{question-pruxe9liminaires-bonus-3-points}}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\tightlist
+\item
+  Montrer que pour toutes variables aléatoires \(X\) et \(Y\), on a :
+  \[\text E[(X-\text E[X])(Y-\text E[Y])] = \text E[XY] - \text E[X] \text E[Y]\]
+\end{enumerate}
+
+On a : \newline \(\text E[(X-\text E[X])(Y-\text E[Y])]\)
+\newline \(= \text E[XY] - \text E[X]E[Y] - \text E[X]E[Y] + \text E[X]E[Y]\)
+\newline \(= \text E[XY] - E[X]E[Y]\)
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Soit \(C\) la matrice de covariance d'une matrice de données \(X\).
+  Montrer que la matrice \(C\) est symétrique.
+\end{enumerate}
+
+Les éléments diagonaux de C représentent les variances des données de X.
+De plus, les autres éléments décrivent la covariance entre \(X_{i}\) et
+\(X_{j}\) avec i \(\ne\) j. Et comme,
+\(cov(X_{i},X_{j}) = cov(X_{j},X_{i})\) alors, la matrice \(C\) est
+symétrique.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Montrer que la matrice \(C\) est semi-définie positive. Rappel : la
+  matrice symétrique \(C\) est semi-définie positive ssi
+  \(\forall x \in \mathbb R^p, \text{ } x^TCx \geq 0\)
+\end{enumerate}
+
+On sait que :
+\(x^TCx = \sum_{i,j}x_{i }Cov(X_{i},X_{j})x_{j} = \sum_{i,j}Cov(x_{i}X_{i},x_{j}X_{j}) = Var(x_{1}X_{1}+...+x_{n}X_{n}) \ge\)
+0. \newline Donc la matrice \(C\) est semi-définie positive.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  Montrer que pour toute matrice \(C\), il y a équivalence entre :
+  ``\(C\) est semi-définie positive'' et ``les valeurs propres de \(C\)
+  sont toutes positives ou nulles''.
+\end{enumerate}
+
+On suppose que \(C\) est une matrice semi-définie positive et
+\(\lambda\) une de ses valeurs propres. \newline D'après la question c,
+\(x^TCx \ge\) 0, donc \(\lambda (X^TX) \ge\) 0 \(\Rightarrow\)
+\(\lambda\) \(|X|^2\) \(\ge\) 0 \(\Rightarrow\) \(\lambda \ge\) 0
+\newline On peut donc conclure que : les valeurs propres de \(C\) sont
+toutes positives ou nulles.
+
+\hypertarget{impluxe9mentation-de-lacp-20-points}{%
+\section{Implémentation de l'ACP (20
+points)}\label{impluxe9mentation-de-lacp-20-points}}
+
+L'implémentation de toutes les fonctions de base demandées sera notée
+sur 10 points. Tous les apports et améliorations (cf question5) seront
+notés sur 10 points.
+
+\hypertarget{premiuxe8re-uxe9tape-calcul-de-lacp}{%
+\subsection{Première étape : calcul de
+l'ACP}\label{premiuxe8re-uxe9tape-calcul-de-lacp}}
+
+On utilisera le jeu de données de décathlon :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{decathlon }\OtherTok{\textless{}{-}} \FunctionTok{read.table}\NormalTok{(}\AttributeTok{file =} \StringTok{"AnaDo\_JeuDonnees\_Decathlon.csv"}\NormalTok{, }
+                        \AttributeTok{header=}\ConstantTok{TRUE}\NormalTok{,}\AttributeTok{sep=}\StringTok{";"}\NormalTok{,}\AttributeTok{dec=}\StringTok{"."}\NormalTok{, }\AttributeTok{row.names=}\DecValTok{1}\NormalTok{, }
+                        \AttributeTok{check.names=}\ConstantTok{FALSE}\NormalTok{, }\AttributeTok{fileEncoding=}\StringTok{"latin1"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+On pourra donc s'appuyer sur le fichier pdf ``Commandes utiles'' fourni
+dans le TD1 pour comparer nos résultats. Vos graphes seront sûrement le
+symétrique de ceux affichés par le package FactoMineR, vous pouvez y
+remédier en multipliant votre matrice de données par \((-1)\) mais ce
+n'est pas obligatoire.
+
+Pour tracer les cercles des corrélations vous aurez sûrement besoin du
+package \texttt{plotrix} qui permet de dessiner des cercles, que vous
+pouvez installer via la commande \texttt{install.packages("plotrix")}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(plotrix)}
+\end{Highlighting}
+\end{Shaded}
+
+De la même façon que dans le TD1, on effectuait la commande
+\texttt{res\ \textless{}-\ PCA(fertilite{[},1:6{]})}, on veut une
+fonction qui prend en entrée le tableau de données et qui effectue
+l'ACP.
+
+Dans un premier temps, on ne tiendra pas compte des variables
+qualitatives supplémentaires, on les traitera plus tard.
+
+En notant \(X\) notre matrice de données (sans les variables
+descriptives supplémentaires), l'ACP consiste à trouver une matrice
+\(Y\) contenant les mêmes données mais dans une base orthogonale
+différente maximisant l'explicabilité de la variance. Les étapes du
+calcul de l'ACP sont les suivantes :
+
+\begin{itemize}
+\tightlist
+\item
+  Centrer et réduire \(X\)
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{X }\OtherTok{\textless{}{-}}\NormalTok{ decathlon[,}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{10}\NormalTok{)]}
+\NormalTok{ctr }\OtherTok{\textless{}{-}} \FunctionTok{scale}\NormalTok{(X)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Calcul de la matrice de covariance \(C\) de \(X\)
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{C }\OtherTok{\textless{}{-}} \FunctionTok{cov}\NormalTok{(ctr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Calcul des vecteurs propres et valeurs propres de \(C\)
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{VAP\_VEP }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(X)\{}
+\NormalTok{  data }\OtherTok{\textless{}{-}} \FunctionTok{cov}\NormalTok{(X)}
+\NormalTok{  vap }\OtherTok{\textless{}{-}} \FunctionTok{eigen}\NormalTok{(data)}\SpecialCharTok{$}\NormalTok{values}
+\NormalTok{  vep }\OtherTok{\textless{}{-}} \FunctionTok{eigen}\NormalTok{(data)}\SpecialCharTok{$}\NormalTok{vectors}
+  
+  \FunctionTok{return}\NormalTok{(}\FunctionTok{list}\NormalTok{(vap, vep))}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Tri des vecteurs propres et valeurs propres par ordre décroissant de
+  l'importance des valeurs propres
+\end{itemize}
+
+La fonction eigen permet de trier les valeurs. Nous venons de le faire
+dans la fonction VAP\_VEP donc nous n'avons pas besoin d'appliquer la
+fonction sort/order (qui fait exactement la même chose). Il nous suffit
+d'appliquer : VAP\_VEP(X){[}{[}1{]}{]} pour avoir les valeurs propres
+triées et VAP\_VEP(X){[}{[}2{]}{]} pour avoir les vecteurs propres
+triés.
+
+Ecriture des matrices V et L
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{L}\OtherTok{\textless{}{-}}\FunctionTok{diag}\NormalTok{(}\FunctionTok{VAP\_VEP}\NormalTok{(X)[[}\DecValTok{1}\NormalTok{]]) }\CommentTok{\#matrice diagonale des valeurs propres}
+\NormalTok{V}\OtherTok{\textless{}{-}}\FunctionTok{VAP\_VEP}\NormalTok{(X)[[}\DecValTok{2}\NormalTok{]] }\CommentTok{\#matrice des vecteurs propres}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Ecriture des données dans la base orthonormée des vecteurs propres, ce
+  qui correspond à une projection orthogonale de nos données sur la
+  matrice \(W\) des vecteurs propres, ce qui se fait avec le produit
+  matriciel \(X \cdot W\). Plus d'explications ci-dessous.
+\end{itemize}
+
+Nous affichons que les 6 premières données.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{W }\OtherTok{\textless{}{-}} \FunctionTok{as.matrix}\NormalTok{(}\FunctionTok{VAP\_VEP}\NormalTok{(X)[[}\DecValTok{1}\NormalTok{]],}\FunctionTok{VAP\_VEP}\NormalTok{(X)[[}\DecValTok{2}\NormalTok{]])}
+\NormalTok{X2}\OtherTok{\textless{}{-}}\FunctionTok{as.matrix}\NormalTok{(X)}
+\FunctionTok{head}\NormalTok{(X2}\SpecialCharTok{\%*\%}\NormalTok{W)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##               [,1]
+## Sebrle    1875.137
+## Clay      1810.327
+## Karpov    1820.948
+## Macey     1865.555
+## Warners   1821.186
+## Zsivoczky 1856.528
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Ecrire la fonction \texttt{ACP} qui prend en entrée un tableau de
+  données et qui retourne l'ensemble des valeurs propres (dans une
+  variable \texttt{\$vap}) et des vecteurs propres (dans une variable
+  \texttt{\$vep} ) de la matrice de covariance, le tout trié par ordre
+  décroissant. Dans une variable \texttt{\$data} on stockera également
+  les données centrées réduites. Pour la tester, on pourra faire l'appel
+  suivant : \texttt{ACP(decathlon{[},1:10{]})}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ACP }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(X)\{}
+\NormalTok{  data }\OtherTok{\textless{}{-}} \FunctionTok{scale}\NormalTok{(X)}
+\NormalTok{  cov }\OtherTok{\textless{}{-}} \FunctionTok{cov}\NormalTok{(data)}
+\NormalTok{  vap }\OtherTok{\textless{}{-}} \FunctionTok{eigen}\NormalTok{(cov)}\SpecialCharTok{$}\NormalTok{values}
+\NormalTok{  vep }\OtherTok{\textless{}{-}} \FunctionTok{eigen}\NormalTok{(cov)}\SpecialCharTok{$}\NormalTok{vectors}
+  
+  \FunctionTok{return}\NormalTok{(}\FunctionTok{list}\NormalTok{(}\StringTok{"vap"}\OtherTok{=}\NormalTok{vap,}\StringTok{"vep"}\OtherTok{=}\NormalTok{vep,}\StringTok{"data"}\OtherTok{=}\NormalTok{data,}\StringTok{"cov"}\OtherTok{=}\NormalTok{cov))}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Valeurs propres :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ACP}\NormalTok{(X)}\SpecialCharTok{$}\NormalTok{vap}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] 3.2719055 1.7371310 1.4049167 1.0568504 0.6847735 0.5992687 0.4512353
+##  [8] 0.3968766 0.2148149 0.1822275
+\end{verbatim}
+
+Vecteurs propres : Nous affichons que les 6 premières données.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{head}\NormalTok{(}\FunctionTok{ACP}\NormalTok{(X)}\SpecialCharTok{$}\NormalTok{vep)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            [,1]       [,2]        [,3]        [,4]        [,5]        [,6]
+## [1,]  0.4282963  0.1419891  0.15557953  0.03678703 -0.36518741  0.29607739
+## [2,] -0.4101520 -0.2620794 -0.15372674 -0.09901016 -0.04432336 -0.30612478
+## [3,] -0.3441444  0.4539470  0.01972378 -0.18539458 -0.13431954  0.30547299
+## [4,] -0.3161944  0.2657761  0.21894349  0.13189684 -0.67121760 -0.46777116
+## [5,]  0.3757157  0.4320460 -0.11091758 -0.02850297  0.10597034 -0.33252178
+## [6,]  0.4125544  0.1735910  0.07815576 -0.28290068 -0.19857266 -0.09963776
+##             [,7]        [,8]       [,9]       [,10]
+## [1,] -0.38177608  0.46160211  0.1047577  0.42428269
+## [2,] -0.62769317 -0.02101165  0.4826691  0.08104448
+## [3,]  0.30972542 -0.31393005  0.4272908  0.39028424
+## [4,]  0.09145002  0.12509166 -0.2436605 -0.10642724
+## [5,]  0.12442114  0.21339819  0.5521294 -0.41399532
+## [6,] -0.35733030 -0.71111429 -0.1501343 -0.09086448
+\end{verbatim}
+
+Données centrée-réduite :
+
+Nous affichons que les 6 premières données.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{head}\NormalTok{(}\FunctionTok{ACP}\NormalTok{(X)}\SpecialCharTok{$}\NormalTok{data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                 100m   Longueur       Poids     Hauteur       400m      110m H
+## Sebrle    -0.5628739  1.8331131 2.283919585  1.60955474 -1.0892025 -1.17818270
+## Clay      -2.1216730  2.2123779 0.913271989  0.93502243 -0.3696226 -1.00861538
+## Karpov    -1.8935560  1.7382969 1.762345721  1.27228858 -2.4329962 -1.34775002
+## Macey     -0.4107959  0.6637134 1.519753226  1.94682089 -0.5603546 -0.09719103
+## Warners   -1.4373221  1.5170591 0.003550134 -0.07677604 -1.4273183 -1.26296636
+## Zsivoczky -0.3347570 -0.3792648 1.010308987  1.60955474 -0.1875602  0.72944966
+##               Disque     Perche     Javelot       1500m
+## Sebrle     1.3009450  0.8545364  2.52825135  0.08439142
+## Clay       1.7124500  0.4948240  2.36043901  0.25486670
+## Karpov     2.1683620 -0.5843134 -0.57524110 -0.07837391
+## Macey      1.1884472 -1.3037383  0.02971203 -1.16547502
+## Warners   -0.1763283  0.4948240 -0.60631746 -0.08351387
+## Zsivoczky  0.3832000 -0.2246009  1.06351893 -0.81253124
+\end{verbatim}
+
+Matrice de covariance : Nous affichons que les 6 premières données.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{head}\NormalTok{(}\FunctionTok{ACP}\NormalTok{(X)}\SpecialCharTok{$}\NormalTok{cov)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                100m   Longueur      Poids    Hauteur       400m     110m H
+## 100m      1.0000000 -0.5986777 -0.3564823 -0.2462529  0.5202982  0.5798889
+## Longueur -0.5986777  1.0000000  0.1833044  0.2946444 -0.6020626 -0.5054101
+## Poids    -0.3564823  0.1833044  1.0000000  0.4892115 -0.1384329 -0.2516157
+## Hauteur  -0.2462529  0.2946444  0.4892115  1.0000000 -0.1879569 -0.2832891
+## 400m      0.5202982 -0.6020626 -0.1384329 -0.1879569  1.0000000  0.5479878
+## 110m H    0.5798889 -0.5054101 -0.2516157 -0.2832891  0.5479878  1.0000000
+##              Disque       Perche      Javelot       1500m
+## 100m     -0.2217076 -0.082536834 -0.157746452 -0.06054645
+## Longueur  0.1943101  0.204014112  0.119758933 -0.03368613
+## Poids     0.6157681  0.061181853  0.374955509  0.11580306
+## Hauteur   0.3692183 -0.156180742  0.171880092 -0.04490252
+## 400m     -0.1178794 -0.079292469  0.004232096  0.40810643
+## 110m H   -0.3262010 -0.002703885  0.008743251  0.03754024
+\end{verbatim}
+
+\hypertarget{deuxiuxe8me-uxe9tape-affichage-de-lacp-pour-les-individus}{%
+\subsection{Deuxième étape : affichage de l'ACP pour les
+individus}\label{deuxiuxe8me-uxe9tape-affichage-de-lacp-pour-les-individus}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Ecrire la fonction \texttt{individusACP} qui trace l'ACP des individus
+  sur les axes sélectionnés. Elle aura donc en entrée un argument
+  ``axes'' sur lequel tracer les données. On pourra la tester sur les
+  deux premières dimensions avec l'appel :
+  \texttt{individusACP(axes=1:2)}
+\end{enumerate}
+
+La visualisation de cette fonction se trouve dans la 5ème partie avec
+une version améliorée.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{individusACP }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(axes, PCA) \{}
+\NormalTok{  V }\OtherTok{\textless{}{-}} \FunctionTok{as.matrix}\NormalTok{(}\FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep)}
+\NormalTok{  D }\OtherTok{\textless{}{-}} \FunctionTok{as.matrix}\NormalTok{(}\FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{data)}
+\NormalTok{  res }\OtherTok{\textless{}{-}}\NormalTok{ D}\SpecialCharTok{\%*\%}\NormalTok{V}
+  
+\NormalTok{  dim1 }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(}\StringTok{"Dim"}\NormalTok{,}\FunctionTok{as.character}\NormalTok{(axes[}\DecValTok{1}\NormalTok{]))}
+\NormalTok{  dim2 }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(}\StringTok{"Dim"}\NormalTok{,}\FunctionTok{as.character}\NormalTok{(axes[}\DecValTok{2}\NormalTok{]))}
+  
+  \FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{),}\AttributeTok{pty =} \StringTok{"s"}\NormalTok{)}
+  \FunctionTok{plot}\NormalTok{(res[,axes], }\AttributeTok{xlab =}\NormalTok{ dim1, }\AttributeTok{ylab =}\NormalTok{ dim2, }\AttributeTok{pch =} \DecValTok{1}\NormalTok{, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{)}
+  \FunctionTok{text}\NormalTok{(res[,axes], }\AttributeTok{labels =} \FunctionTok{row.names}\NormalTok{(}\FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{data), }\AttributeTok{cex =} \FloatTok{0.6}\NormalTok{, }\AttributeTok{pos =} \DecValTok{1}\NormalTok{)}
+  \FunctionTok{abline}\NormalTok{(}\AttributeTok{v =} \DecValTok{0}\NormalTok{, }\AttributeTok{lty =} \DecValTok{2}\NormalTok{)}
+  \FunctionTok{abline}\NormalTok{(}\AttributeTok{h =} \DecValTok{0}\NormalTok{, }\AttributeTok{lty =} \DecValTok{2}\NormalTok{)}
+  \FunctionTok{title}\NormalTok{(}\StringTok{"ACP"}\NormalTok{)}
+  \FunctionTok{return}\NormalTok{(res)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{troisiuxe8me-uxe9tape-fonction-summary}{%
+\subsection{Troisième étape : fonction
+summary}\label{troisiuxe8me-uxe9tape-fonction-summary}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Ecrire la fonction \texttt{summary}, permettant de retourner les
+  informations principales de l'ACP. Il est conseillé (mais pas
+  obligatoire) d'écrire plusieurs sous-fonctions pour composer la
+  fonction \texttt{summary}.
+\end{enumerate}
+
+La visualisation de cette fonction se trouve dans la 5ème partie avec
+une version améliorée.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{summary }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(PCA) \{}
+  
+  \CommentTok{\#Eigenvalues}
+\NormalTok{  vap }\OtherTok{\textless{}{-}} \FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vap}
+\NormalTok{  vect }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FunctionTok{length}\NormalTok{(vap))) \{}
+\NormalTok{    somme }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(vap)}
+\NormalTok{    pourcentage }\OtherTok{\textless{}{-}}\NormalTok{ (vap[i]}\SpecialCharTok{/}\NormalTok{somme)}\SpecialCharTok{*}\DecValTok{100}
+\NormalTok{    vect }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(vect, pourcentage)}
+\NormalTok{  \}}
+\NormalTok{  eigenvalues }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(vap, vect)}
+  \FunctionTok{colnames}\NormalTok{(eigenvalues) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Variance"}\NormalTok{, }\StringTok{"\% of var."}\NormalTok{)}
+  \FunctionTok{print}\NormalTok{(}\StringTok{"Eigenvalues"}\NormalTok{)}
+  \FunctionTok{print}\NormalTok{(}\FunctionTok{head}\NormalTok{(eigenvalues))}
+  
+  \CommentTok{\#Individuals}
+\NormalTok{  dim }\OtherTok{\textless{}{-}} \FunctionTok{individusACP}\NormalTok{(}\AttributeTok{axes=}\DecValTok{1}\SpecialCharTok{:}\DecValTok{2}\NormalTok{, PCA)}
+  \FunctionTok{graphics.off}\NormalTok{()}
+
+    \CommentTok{\#Dim1}
+\NormalTok{  contr\_1 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+\NormalTok{  sommecarre\_1 }\OtherTok{\textless{}{-}}\NormalTok{ dim[,}\DecValTok{1}\NormalTok{]}\SpecialCharTok{\%*\%}\NormalTok{dim[,}\DecValTok{1}\NormalTok{]}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FunctionTok{length}\NormalTok{(dim[,}\DecValTok{1}\NormalTok{]))) \{}
+\NormalTok{    contr\_1 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(contr\_1, ((dim[,}\DecValTok{1}\NormalTok{][i])}\SpecialCharTok{**}\DecValTok{2}\SpecialCharTok{/}\NormalTok{sommecarre\_1)}\SpecialCharTok{*}\DecValTok{100}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{  individuals }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(dim[,}\DecValTok{1}\NormalTok{], contr\_1)}
+  
+\NormalTok{  cos2\_1 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FunctionTok{length}\NormalTok{(dim[,}\DecValTok{1}\NormalTok{]))) \{}
+\NormalTok{    cos2\_1 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(cos2\_1, dim[i,}\DecValTok{1}\NormalTok{]}\SpecialCharTok{**}\DecValTok{2}\SpecialCharTok{/}\FunctionTok{sqrt}\NormalTok{(}\FunctionTok{sum}\NormalTok{(dim[i,]}\SpecialCharTok{**}\DecValTok{2}\NormalTok{))}\SpecialCharTok{**}\DecValTok{2}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{  individuals }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(individuals, cos2\_1)}
+  
+    \CommentTok{\#Dim2}
+\NormalTok{  contr\_2 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+\NormalTok{  sommecarre\_2 }\OtherTok{\textless{}{-}}\NormalTok{ dim[,}\DecValTok{2}\NormalTok{]}\SpecialCharTok{\%*\%}\NormalTok{dim[,}\DecValTok{2}\NormalTok{]}
+\NormalTok{  individuals }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(individuals, dim[,}\DecValTok{2}\NormalTok{])}
+  
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FunctionTok{length}\NormalTok{(dim[,}\DecValTok{2}\NormalTok{]))) \{}
+\NormalTok{    contr\_2 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(contr\_2, ((dim[,}\DecValTok{2}\NormalTok{][i])}\SpecialCharTok{**}\DecValTok{2}\SpecialCharTok{/}\NormalTok{sommecarre\_2)}\SpecialCharTok{*}\DecValTok{100}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{  individuals }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(individuals, contr\_2)}
+
+\NormalTok{  cos2\_2 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FunctionTok{length}\NormalTok{(dim[,}\DecValTok{2}\NormalTok{]))) \{}
+\NormalTok{    cos2\_2 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(cos2\_2, dim[i,}\DecValTok{2}\NormalTok{]}\SpecialCharTok{**}\DecValTok{2}\SpecialCharTok{/}\FunctionTok{sqrt}\NormalTok{(}\FunctionTok{sum}\NormalTok{(dim[i,]}\SpecialCharTok{**}\DecValTok{2}\NormalTok{))}\SpecialCharTok{**}\DecValTok{2}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{  individuals }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(individuals, cos2\_2)}
+  
+  \FunctionTok{colnames}\NormalTok{(individuals) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Dim 1"}\NormalTok{,}\StringTok{"ctr"}\NormalTok{, }\StringTok{"cos2"}\NormalTok{, }\StringTok{"Dim 2"}\NormalTok{,}\StringTok{"ctr"}\NormalTok{, }\StringTok{"cos2"}\NormalTok{)}
+  
+  \FunctionTok{print}\NormalTok{(}\StringTok{"Individuals"}\NormalTok{)}
+  \FunctionTok{print}\NormalTok{(}\FunctionTok{head}\NormalTok{(individuals))}
+  
+  \CommentTok{\#Variables}
+    \CommentTok{\#Dim1}
+\NormalTok{  corr\_1 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FunctionTok{length}\NormalTok{(vap))) \{}
+\NormalTok{    corr\_1 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(corr\_1, }\FunctionTok{sqrt}\NormalTok{(vap[}\DecValTok{1}\NormalTok{])}\SpecialCharTok{*}\FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[i,}\DecValTok{1}\NormalTok{])}
+\NormalTok{  \}}
+\NormalTok{  variables }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(corr\_1)}
+
+\NormalTok{  cos2\_1 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FunctionTok{length}\NormalTok{(corr\_1))) \{}
+\NormalTok{    cos2\_1 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(cos2\_1, corr\_1[i]}\SpecialCharTok{**}\DecValTok{2}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{  variables }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(variables, cos2\_1)}
+  
+\NormalTok{  contr\_1 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+\NormalTok{  sumSquare1 }\OtherTok{\textless{}{-}} \FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[,}\DecValTok{1}\NormalTok{]}\SpecialCharTok{\%*\%}\FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[,}\DecValTok{1}\NormalTok{]}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FunctionTok{length}\NormalTok{(}\FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[,}\DecValTok{1}\NormalTok{]))) \{}
+\NormalTok{    contr\_1 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(contr\_1, (}\FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[i,}\DecValTok{1}\NormalTok{]}\SpecialCharTok{**}\DecValTok{2}\SpecialCharTok{/}\NormalTok{sumSquare1)}\SpecialCharTok{*}\DecValTok{100}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{  variables }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(variables, contr\_1)}
+  
+    \CommentTok{\#Dim2}
+\NormalTok{  corr\_2 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FunctionTok{length}\NormalTok{(vap))) \{}
+\NormalTok{    corr\_2 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(corr\_2, }\FunctionTok{sqrt}\NormalTok{(vap[}\DecValTok{2}\NormalTok{])}\SpecialCharTok{*}\FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[i,}\DecValTok{2}\NormalTok{])}
+\NormalTok{  \}}
+\NormalTok{  variables }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(variables, corr\_2)}
+  
+\NormalTok{  cos2\_2 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FunctionTok{length}\NormalTok{(corr\_2))) \{}
+\NormalTok{    cos2\_2 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(cos2\_2, corr\_2[i]}\SpecialCharTok{**}\DecValTok{2}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{  variables }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(variables, cos2\_2)}
+
+\NormalTok{  contr\_2 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+\NormalTok{  sumSquare2 }\OtherTok{\textless{}{-}} \FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[,}\DecValTok{2}\NormalTok{]}\SpecialCharTok{\%*\%}\FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[,}\DecValTok{2}\NormalTok{]}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FunctionTok{length}\NormalTok{(}\FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[,}\DecValTok{2}\NormalTok{]))) \{}
+\NormalTok{    contr\_2 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(contr\_2, (}\FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[i,}\DecValTok{2}\NormalTok{]}\SpecialCharTok{**}\DecValTok{2}\SpecialCharTok{/}\NormalTok{sumSquare2)}\SpecialCharTok{*}\DecValTok{100}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{  variables }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(variables, contr\_2)}
+  
+\NormalTok{  nom\_Var }\OtherTok{\textless{}{-}} \FunctionTok{colnames}\NormalTok{(}\FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{data)}
+  \FunctionTok{row.names}\NormalTok{(variables) }\OtherTok{\textless{}{-}}\NormalTok{ nom\_Var}
+  \FunctionTok{colnames}\NormalTok{(variables) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Corr 1"}\NormalTok{, }\StringTok{"Cos2 1"}\NormalTok{, }\StringTok{"Ctr 1"}\NormalTok{,}\StringTok{"Corr 2"}\NormalTok{, }\StringTok{"Cos2 2"}\NormalTok{, }\StringTok{"Ctr 2"}\NormalTok{)}
+  
+  \FunctionTok{print}\NormalTok{(}\StringTok{"Variables"}\NormalTok{)}
+  \FunctionTok{print}\NormalTok{(}\FunctionTok{head}\NormalTok{(variables))}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{quatriuxe8me-uxe9tape-affichage-de-lacp-pour-les-variables}{%
+\subsection{Quatrième étape : affichage de l'ACP pour les
+variables}\label{quatriuxe8me-uxe9tape-affichage-de-lacp-pour-les-variables}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  Ecrire la fonction \texttt{variablesACP} qui trace le cercle de
+  corrélation des variables sur les axes sélectionnés. Elle aura donc en
+  entrée un argument ``axes'' sur lequel tracer les données. On pourra
+  la tester sur les deux premières dimensions avec l'appel :
+  \texttt{variablesACP(axes=1:2)}. Il ne sera pas obligatoire de
+  dessiner des flèches (comme dans le package FactoMineR).
+\end{enumerate}
+
+La visualisation de cette fonction se trouve dans la 5ème partie avec
+une version améliorée.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{variablesACP }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(axes, PCA) \{ }
+  
+\NormalTok{  vep }\OtherTok{\textless{}{-}} \FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep}
+\NormalTok{  vap }\OtherTok{\textless{}{-}} \FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vap}
+\NormalTok{  cor\_v }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+\NormalTok{  data }\OtherTok{\textless{}{-}} \FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{data}
+\NormalTok{  taille\_v }\OtherTok{\textless{}{-}} \FunctionTok{length}\NormalTok{(vep[,}\DecValTok{1}\NormalTok{])}
+  
+  \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{1}\NormalTok{, taille\_v)) \{}
+\NormalTok{    cor\_dv }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+    \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FunctionTok{length}\NormalTok{(vap))) \{}
+\NormalTok{      cor\_dv }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(cor\_dv, }\FunctionTok{sqrt}\NormalTok{(vap[k])}\SpecialCharTok{*}\NormalTok{vep[i,k])}
+\NormalTok{    \}}
+\NormalTok{    cor\_v }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(cor\_v, cor\_dv)}
+\NormalTok{  \}}
+  
+\NormalTok{  dim1 }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(}\StringTok{"Dim"}\NormalTok{,}\FunctionTok{as.character}\NormalTok{(axes[}\DecValTok{1}\NormalTok{]))}
+\NormalTok{  dim2 }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(}\StringTok{"Dim"}\NormalTok{,}\FunctionTok{as.character}\NormalTok{(axes[}\DecValTok{2}\NormalTok{]))}
+
+  \FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{),}\AttributeTok{pty =} \StringTok{"s"}\NormalTok{)}
+  \FunctionTok{plot}\NormalTok{(cor\_v[,axes],}\AttributeTok{xlim =} \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{),}\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{),}\AttributeTok{xlab=}\NormalTok{dim1,}\AttributeTok{ylab=}\NormalTok{dim2)}
+  \FunctionTok{text}\NormalTok{(cor\_v[,axes], }\AttributeTok{labels =} \FunctionTok{colnames}\NormalTok{(}\FunctionTok{ACP}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{data), }\AttributeTok{cex =} \FloatTok{0.6}\NormalTok{, }\AttributeTok{pos =} \DecValTok{1}\NormalTok{)}
+  \FunctionTok{abline}\NormalTok{(}\AttributeTok{v =} \DecValTok{0}\NormalTok{, }\AttributeTok{lty =} \DecValTok{2}\NormalTok{)}
+  \FunctionTok{abline}\NormalTok{(}\AttributeTok{h =} \DecValTok{0}\NormalTok{, }\AttributeTok{lty =} \DecValTok{2}\NormalTok{)}
+  \FunctionTok{title}\NormalTok{(}\StringTok{"Graphique des variables"}\NormalTok{)}
+  \FunctionTok{draw.circle}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\AttributeTok{nv =} \DecValTok{500}\NormalTok{, }\AttributeTok{border =} \ConstantTok{NULL}\NormalTok{, }\AttributeTok{col =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{lty =} \DecValTok{1}\NormalTok{, }\AttributeTok{lwd =} \DecValTok{1}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{derniuxe8re-uxe9tape-amuxe9lioration-des-fonctions}{%
+\subsection{Dernière étape : amélioration des
+fonctions}\label{derniuxe8re-uxe9tape-amuxe9lioration-des-fonctions}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  En vous inspirant des fonctions du package FactoMineR utilisées lors
+  du TD1, améliorer toutes les fonctions écrites ci-dessus pour y
+  inclure des options supplémentaires. Par exemple, voici une liste (non
+  exhaustive) des choses qu'il est possible d'améliorer
+\end{enumerate}
+
+En annexe se trouvent les fonctions intermédiaires que nous avons créées
+avant d'avoir ces versions finales.
+
+\hypertarget{pca}{%
+\subsubsection{PCA}\label{pca}}
+
+\begin{itemize}
+\tightlist
+\item
+  Dans la fonction ACP, ajouter deux paramètres supplémentaires :
+  \texttt{quanti.sup} et \texttt{quali.sup}, qui indiqueront des
+  colonnes. Si ces paramètres ne sont pas indiqués par l'utilisateur,
+  alors l'ACP se comporte de la même façon que la fonction précédemment
+  écrite. S'ils sont entrés par l'utilisateur, ils indiquent les
+  colonnes des variables quantitatives ou qualitatives supplémentaires.
+  Par exemple, la fonction répondra à l'appel :
+  \texttt{PCA(decathlon,\ quanti.sup=11:12,\ quali.sup=13)}. Bien sûr,
+  il est possible de rentrer un seul des deux arguments (comme pour le
+  jeu de donnée de fertilité en Europe)
+\item
+  Ajouter un paramètre en entrée de l'ACP pour savoir si l'on souhaite
+  centrer et réduire les données. En effet, cela n'est pas toujours
+  souhaitable (notamment quand on a des informations avec beaucoup de
+  bruit, car le fait de normaliser les données va mettre le bruit à la
+  même valeur que les autres données)
+\item
+  Effectuer les calculs à chaque nouvel appel de \texttt{summarize} ou
+  des fonctions graphiques n'est pas optimal (redondant). Le mieux
+  serait, dès l'appel à la fonction \texttt{ACP}, de faire tous les
+  calculs nécessaires et de les stocker dans des variables, qui seraient
+  ensuite simplement retournées ou utilisées lors de l'appel des
+  fonctions
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ACP\_FINAL }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(X, }\AttributeTok{quanti.sup=}\ConstantTok{NULL}\NormalTok{, }\AttributeTok{quali.sup=}\ConstantTok{NULL}\NormalTok{, }\AttributeTok{cr =} \ConstantTok{TRUE}\NormalTok{) \{}
+
+    \CommentTok{\#quanti.sub \& quali.sub}
+\NormalTok{  supp }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.null}\NormalTok{(quanti.sup))\{}
+    \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in}\NormalTok{ quanti.sup) \{}
+\NormalTok{      supp }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(supp, i)}
+\NormalTok{    \}}
+\NormalTok{  \}}
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.null}\NormalTok{(quali.sup)) \{}
+    \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in}\NormalTok{ quali.sup) \{}
+\NormalTok{      supp }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(supp, i)}
+\NormalTok{    \}}
+\NormalTok{  \}}
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.null}\NormalTok{(supp)) \{}
+\NormalTok{    supp }\OtherTok{\textless{}{-}} \FunctionTok{sort}\NormalTok{(supp)}
+\NormalTok{    X }\OtherTok{\textless{}{-}}\NormalTok{ X[,}\SpecialCharTok{{-}}\NormalTok{supp]}
+\NormalTok{  \}}
+  
+    \CommentTok{\#centree{-}reduite}
+  \ControlFlowTok{if}\NormalTok{ (cr }\SpecialCharTok{==} \ConstantTok{FALSE}\NormalTok{) \{}
+\NormalTok{    data }\OtherTok{\textless{}{-}}\NormalTok{ X}
+\NormalTok{  \}}
+  \ControlFlowTok{else}\NormalTok{ \{}
+\NormalTok{    data }\OtherTok{\textless{}{-}} \FunctionTok{scale}\NormalTok{(X)}
+\NormalTok{  \}}
+
+    \CommentTok{\#covariance}
+\NormalTok{  cov }\OtherTok{\textless{}{-}} \FunctionTok{cov}\NormalTok{(data) }
+    
+    \CommentTok{\#valeurs/vecteurs propres}
+\NormalTok{  vap }\OtherTok{\textless{}{-}} \FunctionTok{eigen}\NormalTok{(cov)}\SpecialCharTok{$}\NormalTok{values}
+\NormalTok{  vep }\OtherTok{\textless{}{-}} \FunctionTok{eigen}\NormalTok{(cov)}\SpecialCharTok{$}\NormalTok{vectors}
+  
+    \CommentTok{\#Eigenvalues}
+\NormalTok{  vect }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FunctionTok{length}\NormalTok{(vap))) \{}
+\NormalTok{    somme }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(vap)}
+\NormalTok{    pourcentage }\OtherTok{\textless{}{-}}\NormalTok{ (vap[i]}\SpecialCharTok{/}\NormalTok{somme)}\SpecialCharTok{*}\DecValTok{100}
+\NormalTok{    vect }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(vect, pourcentage)}
+\NormalTok{  \}}
+\NormalTok{  cumul\_var }\OtherTok{\textless{}{-}} \FunctionTok{cumsum}\NormalTok{(vect)}
+\NormalTok{  eigenvalues }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(vap, vect, cumul\_var)}
+  \FunctionTok{colnames}\NormalTok{(eigenvalues) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Variance"}\NormalTok{, }\StringTok{"\% of var."}\NormalTok{, }\StringTok{"Cumulative \% of var"}\NormalTok{)}
+  
+    \CommentTok{\#Individus}
+      \CommentTok{\#Cor}
+\NormalTok{  V }\OtherTok{\textless{}{-}} \FunctionTok{as.matrix}\NormalTok{(vep)}
+\NormalTok{  D }\OtherTok{\textless{}{-}} \FunctionTok{as.matrix}\NormalTok{(data)}
+\NormalTok{  cor\_i }\OtherTok{\textless{}{-}}\NormalTok{ D}\SpecialCharTok{\%*\%}\NormalTok{V}
+      \CommentTok{\#Contribution}
+\NormalTok{  contr\_i }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{1}\NormalTok{, }\FunctionTok{length}\NormalTok{(cor\_i[}\DecValTok{1}\NormalTok{,]))) \{}
+\NormalTok{    sommecarre }\OtherTok{\textless{}{-}}\NormalTok{ cor\_i[,k]}\SpecialCharTok{\%*\%}\NormalTok{cor\_i[,k]}
+\NormalTok{    contr\_di }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+    \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FunctionTok{length}\NormalTok{(cor\_i[,k]))) \{}
+\NormalTok{      contr\_di }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(contr\_di, ((cor\_i[,k][i])}\SpecialCharTok{**}\DecValTok{2}\SpecialCharTok{/}\NormalTok{sommecarre)}\SpecialCharTok{*}\DecValTok{100}\NormalTok{)}
+\NormalTok{    \}}
+\NormalTok{    contr\_i }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(contr\_i, contr\_di)}
+\NormalTok{  \}}
+      \CommentTok{\#Cos2}
+\NormalTok{  cos2\_i }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{1}\NormalTok{, }\FunctionTok{length}\NormalTok{(cor\_i[}\DecValTok{1}\NormalTok{,]))) \{}
+\NormalTok{    cos2\_di }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+    \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FunctionTok{length}\NormalTok{(cor\_i[,k]))) \{}
+\NormalTok{      cos2\_di }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(cos2\_di, cor\_i[i,k]}\SpecialCharTok{**}\DecValTok{2}\SpecialCharTok{/}\FunctionTok{sqrt}\NormalTok{(}\FunctionTok{sum}\NormalTok{(cor\_i[i,]}\SpecialCharTok{**}\DecValTok{2}\NormalTok{))}\SpecialCharTok{**}\DecValTok{2}\NormalTok{)}
+\NormalTok{    \}}
+\NormalTok{    cos2\_i }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(cos2\_i, cos2\_di)}
+\NormalTok{  \}}
+  
+    \CommentTok{\#Variables}
+\NormalTok{  taille\_v }\OtherTok{\textless{}{-}} \FunctionTok{length}\NormalTok{(vep[,}\DecValTok{1}\NormalTok{])}
+      \CommentTok{\#Cor}
+\NormalTok{  cor\_v }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{1}\NormalTok{, taille\_v)) \{}
+\NormalTok{    cor\_dv }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+    \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FunctionTok{length}\NormalTok{(vap))) \{}
+\NormalTok{      cor\_dv }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(cor\_dv, }\FunctionTok{sqrt}\NormalTok{(vap[k])}\SpecialCharTok{*}\NormalTok{vep[i,k])}
+\NormalTok{    \}}
+\NormalTok{    cor\_v }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(cor\_v, cor\_dv)}
+\NormalTok{  \}}
+  
+    \CommentTok{\#Cos2}
+\NormalTok{  cos2\_v }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{1}\NormalTok{, taille\_v)) \{}
+\NormalTok{    cos2\_dv }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+    \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FunctionTok{length}\NormalTok{(cor\_v[k,]))) \{}
+\NormalTok{      cos2\_dv }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(cos2\_dv, cor\_v[k,i]}\SpecialCharTok{**}\DecValTok{2}\NormalTok{)}
+\NormalTok{    \}}
+\NormalTok{    cos2\_v }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(cos2\_v, cos2\_dv)}
+\NormalTok{  \}}
+    \CommentTok{\#Contribution}
+\NormalTok{  contr\_v }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{1}\NormalTok{, taille\_v)) \{}
+\NormalTok{    contr\_dv }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+\NormalTok{    sumSquare }\OtherTok{\textless{}{-}}\NormalTok{ vep[,k]}\SpecialCharTok{\%*\%}\NormalTok{vep[,k]}
+    \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FunctionTok{length}\NormalTok{(vep[k,]))) \{}
+\NormalTok{      contr\_dv }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(contr\_dv, (vep[i,k]}\SpecialCharTok{**}\DecValTok{2}\SpecialCharTok{/}\NormalTok{sumSquare)}\SpecialCharTok{*}\DecValTok{100}\NormalTok{)}
+\NormalTok{    \}}
+\NormalTok{    contr\_v }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(contr\_v, contr\_dv)}
+\NormalTok{  \}}
+ 
+
+  \FunctionTok{return}\NormalTok{(}\FunctionTok{list}\NormalTok{(}\StringTok{"vap"}\OtherTok{=}\NormalTok{vap,}\StringTok{"vep"}\OtherTok{=}\NormalTok{vep,}\StringTok{"data"}\OtherTok{=}\NormalTok{data,}\StringTok{"cov"}\OtherTok{=}\NormalTok{cov,}\StringTok{"eigenvalues"} \OtherTok{=}\NormalTok{ eigenvalues, }
+              \StringTok{"cor\_ind"} \OtherTok{=}\NormalTok{ cor\_i, }\StringTok{"contr\_ind"} \OtherTok{=}\NormalTok{ contr\_i, }\StringTok{"cos2\_ind"} \OtherTok{=}\NormalTok{ cos2\_i,}
+              \StringTok{"cor\_var"} \OtherTok{=}\NormalTok{ cor\_v, }\StringTok{"cos2\_var"} \OtherTok{=}\NormalTok{ cos2\_v, }\StringTok{"contr\_var"} \OtherTok{=}\NormalTok{ contr\_v))}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{individus}{%
+\subsubsection{Individus}\label{individus}}
+
+\begin{itemize}
+\tightlist
+\item
+  Dans la fonction \texttt{individusACP} on pourra alors ajouter un
+  argument ``habillage'' qui colorie les individus selon leur modalité
+  (ie selon la colonne indiquée par l'argument)
+\end{itemize}
+
+Dans ce cas, nous avons prédéfini les intervalles de couleurs nous même
+: il y a trois intervalles de couleur allant du vert au rouge en passant
+par l'orange. Plus nous nous approchons du vert plus l'individu, avec la
+dimension indiqué dans l'argument habillage, est significatif. A
+contrario de la couleur rouge.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{individusACP\_FINAL }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(axes, PCA, habillage) \{}
+\NormalTok{  res }\OtherTok{\textless{}{-}} \FunctionTok{ACP\_FINAL}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{cor\_ind}
+\NormalTok{  colour }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\FunctionTok{nrow}\NormalTok{(res))) \{}
+    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{abs}\NormalTok{(res[i,habillage]) }\SpecialCharTok{\textless{}} \DecValTok{1}\NormalTok{) \{}
+\NormalTok{      clr }\OtherTok{\textless{}{-}} \StringTok{"green"}
+\NormalTok{    \}}
+    \ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{abs}\NormalTok{(res[i,habillage]) }\SpecialCharTok{\textless{}} \FloatTok{2.5}\NormalTok{) \{}
+\NormalTok{      clr }\OtherTok{\textless{}{-}} \StringTok{"orange"}
+\NormalTok{    \}}
+    \ControlFlowTok{else}\NormalTok{ \{}
+\NormalTok{      clr }\OtherTok{\textless{}{-}} \StringTok{"red"}
+\NormalTok{    \}}
+\NormalTok{    colour }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(colour, clr)}
+\NormalTok{  \}}
+
+\NormalTok{  dim1 }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(}\StringTok{"Dim"}\NormalTok{,}\FunctionTok{as.character}\NormalTok{(axes[}\DecValTok{1}\NormalTok{]))}
+\NormalTok{  dim2 }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(}\StringTok{"Dim"}\NormalTok{,}\FunctionTok{as.character}\NormalTok{(axes[}\DecValTok{2}\NormalTok{]))}
+  \FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{),}\AttributeTok{pty =} \StringTok{"s"}\NormalTok{)}
+  \FunctionTok{plot}\NormalTok{(res[,axes], }\AttributeTok{xlab =}\NormalTok{ dim1, }\AttributeTok{ylab =}\NormalTok{ dim2, }\AttributeTok{pch =} \DecValTok{1}\NormalTok{, }\AttributeTok{col =}\NormalTok{ colour )}
+  \FunctionTok{text}\NormalTok{(res[,axes], }\AttributeTok{labels =} \FunctionTok{row.names}\NormalTok{(}\FunctionTok{ACP\_FINAL}\NormalTok{(X)}\SpecialCharTok{$}\NormalTok{data), }\AttributeTok{cex =} \FloatTok{0.6}\NormalTok{, }\AttributeTok{pos =} \DecValTok{1}\NormalTok{)}
+  \FunctionTok{abline}\NormalTok{(}\AttributeTok{v =} \DecValTok{0}\NormalTok{, }\AttributeTok{lty =} \DecValTok{2}\NormalTok{)}
+  \FunctionTok{abline}\NormalTok{(}\AttributeTok{h =} \DecValTok{0}\NormalTok{, }\AttributeTok{lty =} \DecValTok{2}\NormalTok{)}
+  \FunctionTok{title}\NormalTok{(}\StringTok{"ACP"}\NormalTok{)}
+\NormalTok{\}}
+\FunctionTok{individusACP\_FINAL}\NormalTok{(}\AttributeTok{axes=}\DecValTok{1}\SpecialCharTok{:}\DecValTok{2}\NormalTok{, }\AttributeTok{PCA=}\NormalTok{X, }\AttributeTok{habillage=}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Sujet_TD3_ACP_files/figure-latex/unnamed-chunk-17-1.pdf}
+
+\hypertarget{summary}{%
+\subsubsection{Summary}\label{summary}}
+
+\begin{itemize}
+\tightlist
+\item
+  Dans la fonction \texttt{summary}, ajouter un paramètre ``nbelements''
+  (par défaut égal à 10) qui détermine le nombre d'individus qui doivent
+  être affichés
+\item
+  Dans la fonction \texttt{summary}, pour les eigenvalues, afficher en
+  plus leur pourcentage cumulatif de variance
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{summary\_FINAL }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(PCA, }\AttributeTok{nbelements=}\DecValTok{10}\NormalTok{) \{}
+  
+  \CommentTok{\#Eigenvalues}
+  \FunctionTok{print}\NormalTok{(}\StringTok{"Eigenvalues"}\NormalTok{)}
+  \FunctionTok{print}\NormalTok{(}\FunctionTok{head}\NormalTok{(}\FunctionTok{ACP\_FINAL}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{eigenvalues))}
+  
+  \CommentTok{\#Individuals}
+  
+\NormalTok{  individuals }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(}
+    \FunctionTok{ACP\_FINAL}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{cor\_ind[,}\DecValTok{1}\NormalTok{], }\FunctionTok{ACP\_FINAL}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{contr\_ind[,}\DecValTok{1}\NormalTok{],}
+    \FunctionTok{ACP\_FINAL}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{cos2\_ind[,}\DecValTok{1}\NormalTok{],}\FunctionTok{ACP\_FINAL}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{cor\_ind[,}\DecValTok{2}\NormalTok{],}
+    \FunctionTok{ACP\_FINAL}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{contr\_ind[,}\DecValTok{2}\NormalTok{], }\FunctionTok{ACP\_FINAL}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{cos2\_ind[,}\DecValTok{2}\NormalTok{])}
+                       
+  
+  \FunctionTok{colnames}\NormalTok{(individuals) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Dim 1"}\NormalTok{,}\StringTok{"ctr"}\NormalTok{, }\StringTok{"cos2"}\NormalTok{, }\StringTok{"Dim 2"}\NormalTok{,}\StringTok{"ctr"}\NormalTok{, }\StringTok{"cos2"}\NormalTok{)}
+  
+  \FunctionTok{print}\NormalTok{(}\StringTok{"Individuals"}\NormalTok{)}
+  \FunctionTok{print}\NormalTok{(individuals[}\DecValTok{1}\SpecialCharTok{:}\NormalTok{nbelements,])}
+  
+  \CommentTok{\#Variables}
+\NormalTok{  variables }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(}\FunctionTok{ACP\_FINAL}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{cor\_var[,}\DecValTok{1}\NormalTok{], }\FunctionTok{ACP\_FINAL}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{contr\_var[,}\DecValTok{1}\NormalTok{],}
+                     \FunctionTok{ACP\_FINAL}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{cos2\_var[,}\DecValTok{1}\NormalTok{],}\FunctionTok{ACP\_FINAL}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{cor\_var[,}\DecValTok{2}\NormalTok{],}
+                     \FunctionTok{ACP\_FINAL}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{contr\_var[,}\DecValTok{2}\NormalTok{], }\FunctionTok{ACP\_FINAL}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{cos2\_var[,}\DecValTok{2}\NormalTok{])}
+
+\NormalTok{  nom\_Var }\OtherTok{\textless{}{-}} \FunctionTok{colnames}\NormalTok{(}\FunctionTok{ACP\_FINAL}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{data)}
+  \FunctionTok{row.names}\NormalTok{(variables) }\OtherTok{\textless{}{-}}\NormalTok{ nom\_Var}
+  \FunctionTok{colnames}\NormalTok{(variables) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Corr 1"}\NormalTok{, }\StringTok{"Cos2 1"}\NormalTok{, }\StringTok{"Ctr 1"}\NormalTok{,}\StringTok{"Corr 2"}\NormalTok{, }\StringTok{"Cos2 2"}\NormalTok{, }\StringTok{"Ctr 2"}\NormalTok{)}
+  
+  \FunctionTok{print}\NormalTok{(}\StringTok{"Variables"}\NormalTok{)}
+  \FunctionTok{print}\NormalTok{(}\FunctionTok{head}\NormalTok{(variables))}
+\NormalTok{\}}
+\FunctionTok{summary\_FINAL}\NormalTok{(X, }\AttributeTok{nbelements =} \DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Eigenvalues"
+##       Variance % of var. Cumulative % of var
+## [1,] 3.2719055 32.719055            32.71906
+## [2,] 1.7371310 17.371310            50.09037
+## [3,] 1.4049167 14.049167            64.13953
+## [4,] 1.0568504 10.568504            74.70804
+## [5,] 0.6847735  6.847735            81.55577
+## [6,] 0.5992687  5.992687            87.54846
+## [1] "Individuals"
+##            Dim 1       ctr      cos2      Dim 2         ctr         cos2
+## Sebrle -3.988895 12.157506 0.6954102 1.34906683 2.619234357 7.954314e-02
+## Clay   -3.871273 11.451090 0.7112052 0.82669151 0.983545343 3.243204e-02
+## Karpov -4.563298 15.910981 0.8517553 0.03950447 0.002245949 6.383365e-05
+## Macey  -2.206055  3.718536 0.4230486 1.02898331 1.523786399 9.203950e-02
+## [1] "Variables"
+##              Corr 1    Cos2 1       Ctr 1     Corr 2    Cos2 2       Ctr 2
+## 100m      0.7747198 18.343770 0.600190812  0.1871420  2.016090 0.550415232
+## Longueur -0.7418997 16.822467 0.035022125 -0.3454213  6.868559 0.119315870
+## Poids    -0.6225026 11.843540 0.034005993  0.5983033 20.606785 0.033200868
+## Hauteur  -0.5719453  9.997887 0.001430221  0.3502936  7.063694 0.010360317
+## 400m      0.6796099 14.116229 0.091322660  0.5694378 18.666374 0.001345279
+## 110m H    0.7462453 17.020115 0.052532985  0.2287933  3.013382 0.056158895
+\end{verbatim}
+
+\hypertarget{variables}{%
+\subsubsection{Variables}\label{variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  Lors de l'affichage de l'ACP pour les individus et les variables,
+  afficher en plus les axes des abscisses et des ordonnées. Afficher les
+  variables sous forme de vecteurs
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{variablesACP\_FINAL }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(axes, PCA) \{ }
+
+\NormalTok{  V }\OtherTok{\textless{}{-}} \FunctionTok{ACP\_FINAL}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{cor\_var}
+  
+\NormalTok{  dim1 }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(}\StringTok{"Dim"}\NormalTok{,}\FunctionTok{as.character}\NormalTok{(axes[}\DecValTok{1}\NormalTok{]))}
+\NormalTok{  dim2 }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(}\StringTok{"Dim"}\NormalTok{,}\FunctionTok{as.character}\NormalTok{(axes[}\DecValTok{2}\NormalTok{]))}
+  
+  \FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{),}\AttributeTok{pty =} \StringTok{"s"}\NormalTok{)}
+  \FunctionTok{plot}\NormalTok{(V[,axes],}\AttributeTok{xlim =} \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{),}\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{),}\AttributeTok{xlab=}\NormalTok{dim1,}\AttributeTok{ylab=}\NormalTok{dim2, }\AttributeTok{cex=}\DecValTok{0}\NormalTok{)}
+  \FunctionTok{text}\NormalTok{(V[,axes], }\AttributeTok{labels =} \FunctionTok{colnames}\NormalTok{(}\FunctionTok{ACP\_FINAL}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{data), }\AttributeTok{cex =} \FloatTok{0.6}\NormalTok{, }\AttributeTok{pos =} \DecValTok{1}\NormalTok{)}
+  \FunctionTok{abline}\NormalTok{(}\AttributeTok{v =} \DecValTok{0}\NormalTok{, }\AttributeTok{lty =} \DecValTok{2}\NormalTok{)}
+  \FunctionTok{abline}\NormalTok{(}\AttributeTok{h =} \DecValTok{0}\NormalTok{, }\AttributeTok{lty =} \DecValTok{2}\NormalTok{)}
+  \FunctionTok{title}\NormalTok{(}\StringTok{"Graphique des variables"}\NormalTok{)}
+  \FunctionTok{draw.circle}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\AttributeTok{nv =} \DecValTok{500}\NormalTok{, }\AttributeTok{border =} \ConstantTok{NULL}\NormalTok{, }\AttributeTok{col =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{lty =} \DecValTok{1}\NormalTok{, }\AttributeTok{lwd =} \DecValTok{1}\NormalTok{)}
+  \FunctionTok{arrows}\NormalTok{(}\AttributeTok{x0 =} \FunctionTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, }\AttributeTok{times =} \FunctionTok{length}\NormalTok{(V[,}\DecValTok{1}\NormalTok{])), }
+         \AttributeTok{y0 =} \FunctionTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, }\AttributeTok{times =} \FunctionTok{length}\NormalTok{(V[,}\DecValTok{1}\NormalTok{])), }
+         \AttributeTok{x1 =}\NormalTok{ V[,}\DecValTok{1}\NormalTok{], }\AttributeTok{y1 =}\NormalTok{ V[,}\DecValTok{2}\NormalTok{], }
+         \AttributeTok{code =} \DecValTok{2}\NormalTok{, }\AttributeTok{length =} \FloatTok{0.1}\NormalTok{)}
+
+\NormalTok{\}}
+\FunctionTok{variablesACP\_FINAL}\NormalTok{(}\AttributeTok{axes=}\DecValTok{1}\SpecialCharTok{:}\DecValTok{2}\NormalTok{, X)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Sujet_TD3_ACP_files/figure-latex/unnamed-chunk-19-1.pdf}
+
+\hypertarget{annexes}{%
+\section{Annexes}\label{annexes}}
+
+Voici les codes intermédiaires entre les premières et les dernières
+fonctions que nous avons créées tout au long de ce projet. Par exemple,
+pour l'ACP, entre ACP et ACP\_FINAL nous avons créé ACP\_N.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ACP\_N }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(X, }\AttributeTok{quanti.sup=}\ConstantTok{NULL}\NormalTok{, }\AttributeTok{quali.sup=}\ConstantTok{NULL}\NormalTok{, }\AttributeTok{cr =} \ConstantTok{TRUE}\NormalTok{) \{}
+
+\NormalTok{  supp }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.null}\NormalTok{(quanti.sup))\{}
+    \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in}\NormalTok{ quanti.sup) \{}
+\NormalTok{      supp }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(supp, i)}
+\NormalTok{    \}}
+\NormalTok{  \}}
+
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.null}\NormalTok{(quali.sup)) \{}
+    \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in}\NormalTok{ quali.sup) \{}
+\NormalTok{      supp }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(supp, i)}
+\NormalTok{    \}}
+\NormalTok{  \}}
+  
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.null}\NormalTok{(supp)) \{}
+\NormalTok{    supp }\OtherTok{\textless{}{-}} \FunctionTok{sort}\NormalTok{(supp)}
+\NormalTok{    X }\OtherTok{\textless{}{-}}\NormalTok{ X[,}\SpecialCharTok{{-}}\NormalTok{supp]}
+\NormalTok{  \}}
+  
+  \ControlFlowTok{if}\NormalTok{ (cr }\SpecialCharTok{==} \ConstantTok{FALSE}\NormalTok{) \{}
+\NormalTok{    data }\OtherTok{\textless{}{-}}\NormalTok{ X}
+\NormalTok{  \}}
+  \ControlFlowTok{else}\NormalTok{ \{}
+\NormalTok{    data }\OtherTok{\textless{}{-}} \FunctionTok{scale}\NormalTok{(X)}
+\NormalTok{  \}}
+
+\NormalTok{  cov }\OtherTok{\textless{}{-}} \FunctionTok{cov}\NormalTok{(data) }\CommentTok{\#ne peut pas faire le scale d\textquotesingle{}une variable qualitative}
+\NormalTok{  vap }\OtherTok{\textless{}{-}} \FunctionTok{eigen}\NormalTok{(cov)}\SpecialCharTok{$}\NormalTok{values}
+\NormalTok{  vep }\OtherTok{\textless{}{-}} \FunctionTok{eigen}\NormalTok{(cov)}\SpecialCharTok{$}\NormalTok{vectors}
+  
+  \FunctionTok{return}\NormalTok{(}\FunctionTok{list}\NormalTok{(}\StringTok{"vap"}\OtherTok{=}\NormalTok{vap,}\StringTok{"vep"}\OtherTok{=}\NormalTok{vep,}\StringTok{"data"}\OtherTok{=}\NormalTok{data,}\StringTok{"cov"}\OtherTok{=}\NormalTok{cov))}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Individus
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{individusACP\_N }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(axes, PCA, habillage) \{}
+\NormalTok{  V }\OtherTok{\textless{}{-}} \FunctionTok{as.matrix}\NormalTok{(}\FunctionTok{ACP\_N}\NormalTok{(X)}\SpecialCharTok{$}\NormalTok{vep)}
+\NormalTok{  D }\OtherTok{\textless{}{-}} \FunctionTok{as.matrix}\NormalTok{(}\FunctionTok{ACP\_N}\NormalTok{(X)}\SpecialCharTok{$}\NormalTok{data)}
+\NormalTok{  res }\OtherTok{\textless{}{-}}\NormalTok{ D}\SpecialCharTok{\%*\%}\NormalTok{V}
+\NormalTok{  colour }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\FunctionTok{nrow}\NormalTok{(res))) \{}
+    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{abs}\NormalTok{(res[i,habillage]) }\SpecialCharTok{\textless{}} \DecValTok{1}\NormalTok{) \{}
+\NormalTok{      clr }\OtherTok{\textless{}{-}} \StringTok{"green"}
+\NormalTok{    \}}
+    \ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{abs}\NormalTok{(res[i,habillage]) }\SpecialCharTok{\textless{}} \FloatTok{2.5}\NormalTok{) \{}
+\NormalTok{      clr }\OtherTok{\textless{}{-}} \StringTok{"orange"}
+\NormalTok{    \}}
+    \ControlFlowTok{else}\NormalTok{ \{}
+\NormalTok{      clr }\OtherTok{\textless{}{-}} \StringTok{"red"}
+\NormalTok{    \}}
+\NormalTok{    colour }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(colour, clr)}
+\NormalTok{  \}}
+
+  
+\NormalTok{  dim1 }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(}\StringTok{"Dim"}\NormalTok{,}\FunctionTok{as.character}\NormalTok{(axes[}\DecValTok{1}\NormalTok{]))}
+\NormalTok{  dim2 }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(}\StringTok{"Dim"}\NormalTok{,}\FunctionTok{as.character}\NormalTok{(axes[}\DecValTok{2}\NormalTok{]))}
+  
+  \FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{),}\AttributeTok{pty =} \StringTok{"s"}\NormalTok{)}
+  \FunctionTok{plot}\NormalTok{(res[,axes], }\AttributeTok{xlab =}\NormalTok{ dim1, }\AttributeTok{ylab =}\NormalTok{ dim2, }\AttributeTok{pch =} \DecValTok{1}\NormalTok{, }\AttributeTok{col =}\NormalTok{ colour )}
+  \FunctionTok{text}\NormalTok{(res[,axes], }\AttributeTok{labels =} \FunctionTok{row.names}\NormalTok{(}\FunctionTok{ACP\_N}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{data), }\AttributeTok{cex =} \FloatTok{0.6}\NormalTok{, }\AttributeTok{pos =} \DecValTok{1}\NormalTok{)}
+  \FunctionTok{abline}\NormalTok{(}\AttributeTok{v =} \DecValTok{0}\NormalTok{, }\AttributeTok{lty =} \DecValTok{2}\NormalTok{)}
+  \FunctionTok{abline}\NormalTok{(}\AttributeTok{h =} \DecValTok{0}\NormalTok{, }\AttributeTok{lty =} \DecValTok{2}\NormalTok{)}
+  \FunctionTok{title}\NormalTok{(}\StringTok{"ACP"}\NormalTok{)}
+  \FunctionTok{return}\NormalTok{(res)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Summary
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{summary\_N }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(PCA,}\AttributeTok{nbelements=}\DecValTok{10}\NormalTok{) \{}
+  
+  \CommentTok{\#Eigenvalues}
+\NormalTok{  vap }\OtherTok{\textless{}{-}} \FunctionTok{ACP\_N}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vap}
+\NormalTok{  vect }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FunctionTok{length}\NormalTok{(vap))) \{}
+\NormalTok{    somme }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(vap)}
+\NormalTok{    pourcentage }\OtherTok{\textless{}{-}}\NormalTok{ (vap[i]}\SpecialCharTok{/}\NormalTok{somme)}\SpecialCharTok{*}\DecValTok{100}
+\NormalTok{    vect }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(vect, pourcentage)}
+\NormalTok{  \}}
+\NormalTok{  eigenvalues }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(vap, vect,  }\FunctionTok{cumsum}\NormalTok{(vect))}
+  \FunctionTok{colnames}\NormalTok{(eigenvalues) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Variance"}\NormalTok{, }\StringTok{"\% of var."}\NormalTok{, }\StringTok{"Cumulative \% of var"}\NormalTok{)}
+  \FunctionTok{print}\NormalTok{(}\StringTok{"Eigenvalues"}\NormalTok{)}
+  \FunctionTok{print}\NormalTok{(eigenvalues)}
+  
+  \CommentTok{\#Individuals}
+\NormalTok{  dim }\OtherTok{\textless{}{-}} \FunctionTok{individusACP\_N}\NormalTok{(}\AttributeTok{axes=}\DecValTok{1}\SpecialCharTok{:}\DecValTok{2}\NormalTok{, PCA)}
+   
+    \CommentTok{\#Dim1}
+\NormalTok{  contr\_1 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+\NormalTok{  sommecarre\_1 }\OtherTok{\textless{}{-}}\NormalTok{ dim[,}\DecValTok{1}\NormalTok{]}\SpecialCharTok{\%*\%}\NormalTok{dim[,}\DecValTok{1}\NormalTok{]}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FunctionTok{length}\NormalTok{(dim[,}\DecValTok{1}\NormalTok{]))) \{}
+\NormalTok{    contr\_1 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(contr\_1, ((dim[,}\DecValTok{1}\NormalTok{][i])}\SpecialCharTok{**}\DecValTok{2}\SpecialCharTok{/}\NormalTok{sommecarre\_1)}\SpecialCharTok{*}\DecValTok{100}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{  individuals }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(dim[,}\DecValTok{1}\NormalTok{], contr\_1)}
+  
+\NormalTok{  cos2\_1 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FunctionTok{length}\NormalTok{(dim[,}\DecValTok{1}\NormalTok{]))) \{}
+\NormalTok{    cos2\_1 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(cos2\_1, dim[i,}\DecValTok{1}\NormalTok{]}\SpecialCharTok{**}\DecValTok{2}\SpecialCharTok{/}\FunctionTok{sqrt}\NormalTok{(}\FunctionTok{sum}\NormalTok{(dim[i,]}\SpecialCharTok{**}\DecValTok{2}\NormalTok{))}\SpecialCharTok{**}\DecValTok{2}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{  individuals }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(individuals, cos2\_1)}
+  
+    \CommentTok{\#Dim2}
+\NormalTok{  contr\_2 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+\NormalTok{  sommecarre\_2 }\OtherTok{\textless{}{-}}\NormalTok{ dim[,}\DecValTok{2}\NormalTok{]}\SpecialCharTok{\%*\%}\NormalTok{dim[,}\DecValTok{2}\NormalTok{]}
+\NormalTok{  individuals }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(individuals, dim[,}\DecValTok{2}\NormalTok{])}
+  
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FunctionTok{length}\NormalTok{(dim[,}\DecValTok{2}\NormalTok{]))) \{}
+\NormalTok{    contr\_2 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(contr\_2, ((dim[,}\DecValTok{2}\NormalTok{][i])}\SpecialCharTok{**}\DecValTok{2}\SpecialCharTok{/}\NormalTok{sommecarre\_2)}\SpecialCharTok{*}\DecValTok{100}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{  individuals }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(individuals, contr\_2)}
+
+\NormalTok{  cos2\_2 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FunctionTok{length}\NormalTok{(dim[,}\DecValTok{2}\NormalTok{]))) \{}
+\NormalTok{    cos2\_2 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(cos2\_2, dim[i,}\DecValTok{2}\NormalTok{]}\SpecialCharTok{**}\DecValTok{2}\SpecialCharTok{/}\FunctionTok{sqrt}\NormalTok{(}\FunctionTok{sum}\NormalTok{(dim[i,]}\SpecialCharTok{**}\DecValTok{2}\NormalTok{))}\SpecialCharTok{**}\DecValTok{2}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{  individuals }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(individuals, cos2\_2)}
+  
+  \FunctionTok{colnames}\NormalTok{(individuals) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Dim 1"}\NormalTok{,}\StringTok{"ctr"}\NormalTok{, }\StringTok{"cos2"}\NormalTok{, }\StringTok{"Dim 2"}\NormalTok{,}\StringTok{"ctr"}\NormalTok{, }\StringTok{"cos2"}\NormalTok{)}
+  
+  \FunctionTok{print}\NormalTok{(}\StringTok{"Individuals"}\NormalTok{)}
+  \FunctionTok{print}\NormalTok{(individuals[}\DecValTok{1}\SpecialCharTok{:}\NormalTok{nbelements,])}
+  
+  \CommentTok{\#Variables}
+    \CommentTok{\#Dim1}
+\NormalTok{  corr\_1 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FunctionTok{length}\NormalTok{(vap))) \{}
+\NormalTok{    corr\_1 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(corr\_1, }\FunctionTok{sqrt}\NormalTok{(vap[}\DecValTok{1}\NormalTok{])}\SpecialCharTok{*}\FunctionTok{ACP\_N}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[i,}\DecValTok{1}\NormalTok{])}
+\NormalTok{  \}}
+\NormalTok{  variables }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(corr\_1)}
+
+\NormalTok{  cos2\_1 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FunctionTok{length}\NormalTok{(corr\_1))) \{}
+\NormalTok{    cos2\_1 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(cos2\_1, corr\_1[i]}\SpecialCharTok{**}\DecValTok{2}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{  variables }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(variables, cos2\_1)}
+  
+\NormalTok{  contr\_1 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+\NormalTok{  sumSquare1 }\OtherTok{\textless{}{-}} \FunctionTok{ACP\_N}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[,}\DecValTok{1}\NormalTok{]}\SpecialCharTok{\%*\%}\FunctionTok{ACP\_N}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[,}\DecValTok{1}\NormalTok{]}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FunctionTok{length}\NormalTok{(}\FunctionTok{ACP\_N}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[,}\DecValTok{1}\NormalTok{]))) \{}
+\NormalTok{    contr\_1 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(contr\_1, (}\FunctionTok{ACP\_N}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[i,}\DecValTok{1}\NormalTok{]}\SpecialCharTok{**}\DecValTok{2}\SpecialCharTok{/}\NormalTok{sumSquare1)}\SpecialCharTok{*}\DecValTok{100}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{  variables }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(variables, contr\_1)}
+  
+    \CommentTok{\#Dim2}
+\NormalTok{  corr\_2 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FunctionTok{length}\NormalTok{(vap))) \{}
+\NormalTok{    corr\_2 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(corr\_2, }\FunctionTok{sqrt}\NormalTok{(vap[}\DecValTok{2}\NormalTok{])}\SpecialCharTok{*}\FunctionTok{ACP\_N}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[i,}\DecValTok{2}\NormalTok{])}
+\NormalTok{  \}}
+\NormalTok{  variables }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(variables, corr\_2)}
+  
+\NormalTok{  cos2\_2 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FunctionTok{length}\NormalTok{(corr\_2))) \{}
+\NormalTok{    cos2\_2 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(cos2\_2, corr\_2[i]}\SpecialCharTok{**}\DecValTok{2}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{  variables }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(variables, cos2\_2)}
+
+\NormalTok{  contr\_2 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+\NormalTok{  sumSquare2 }\OtherTok{\textless{}{-}} \FunctionTok{ACP\_N}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[,}\DecValTok{2}\NormalTok{]}\SpecialCharTok{\%*\%}\FunctionTok{ACP\_N}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[,}\DecValTok{2}\NormalTok{]}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FunctionTok{length}\NormalTok{(}\FunctionTok{ACP\_N}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[,}\DecValTok{2}\NormalTok{]))) \{}
+\NormalTok{    contr\_2 }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(contr\_2, (}\FunctionTok{ACP\_N}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep[i,}\DecValTok{2}\NormalTok{]}\SpecialCharTok{**}\DecValTok{2}\SpecialCharTok{/}\NormalTok{sumSquare2)}\SpecialCharTok{*}\DecValTok{100}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{  variables }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(variables, contr\_2)}
+  
+\NormalTok{  nom\_Var }\OtherTok{\textless{}{-}} \FunctionTok{colnames}\NormalTok{(}\FunctionTok{ACP\_N}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{data)}
+  \FunctionTok{row.names}\NormalTok{(variables) }\OtherTok{\textless{}{-}}\NormalTok{ nom\_Var}
+  \FunctionTok{colnames}\NormalTok{(variables) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Corr 1"}\NormalTok{, }\StringTok{"Cos2 1"}\NormalTok{, }\StringTok{"Ctr 1"}\NormalTok{,}\StringTok{"Corr 2"}\NormalTok{, }\StringTok{"Cos2 2"}\NormalTok{, }\StringTok{"Ctr 2"}\NormalTok{)}
+  
+  \FunctionTok{print}\NormalTok{(}\StringTok{"Variables"}\NormalTok{)}
+  \FunctionTok{print}\NormalTok{(variables)}
+  
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Variables
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{variablesACP\_N }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(axes, PCA) \{ }
+\NormalTok{  vep }\OtherTok{\textless{}{-}} \FunctionTok{ACP\_N}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vep}
+\NormalTok{  vap }\OtherTok{\textless{}{-}} \FunctionTok{ACP\_N}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{vap}
+\NormalTok{  cor\_v }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+\NormalTok{  data }\OtherTok{\textless{}{-}} \FunctionTok{ACP\_N}\NormalTok{(PCA)}\SpecialCharTok{$}\NormalTok{data}
+\NormalTok{  taille\_v }\OtherTok{\textless{}{-}} \FunctionTok{length}\NormalTok{(vep[,}\DecValTok{1}\NormalTok{])}
+  
+  \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{1}\NormalTok{, taille\_v)) \{}
+\NormalTok{    cor\_dv }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+    \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq.int}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FunctionTok{length}\NormalTok{(vap))) \{}
+\NormalTok{      cor\_dv }\OtherTok{\textless{}{-}} \FunctionTok{append}\NormalTok{(cor\_dv, }\FunctionTok{sqrt}\NormalTok{(vap[k])}\SpecialCharTok{*}\NormalTok{vep[i,k])}
+\NormalTok{    \}}
+\NormalTok{    cor\_v }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(cor\_v, cor\_dv)}
+\NormalTok{  \}}
+
+\NormalTok{  dim1 }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(}\StringTok{"Dim"}\NormalTok{,}\FunctionTok{as.character}\NormalTok{(axes[}\DecValTok{1}\NormalTok{]))}
+\NormalTok{  dim2 }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(}\StringTok{"Dim"}\NormalTok{,}\FunctionTok{as.character}\NormalTok{(axes[}\DecValTok{2}\NormalTok{]))}
+  
+  \FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{),}\AttributeTok{pty =} \StringTok{"s"}\NormalTok{)}
+  \FunctionTok{plot}\NormalTok{(cor\_v[,axes],}\AttributeTok{xlim =} \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{),}\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{),}\AttributeTok{xlab=}\NormalTok{dim1,}\AttributeTok{ylab=}\NormalTok{dim2, }\AttributeTok{cex =} \DecValTok{0}\NormalTok{)}
+  \FunctionTok{text}\NormalTok{(cor\_v[,axes], }\AttributeTok{labels =} \FunctionTok{colnames}\NormalTok{(data), }\AttributeTok{cex =} \FloatTok{0.6}\NormalTok{, }\AttributeTok{pos =} \DecValTok{1}\NormalTok{)}
+  \FunctionTok{abline}\NormalTok{(}\AttributeTok{v =} \DecValTok{0}\NormalTok{, }\AttributeTok{lty =} \DecValTok{2}\NormalTok{)}
+  \FunctionTok{abline}\NormalTok{(}\AttributeTok{h =} \DecValTok{0}\NormalTok{, }\AttributeTok{lty =} \DecValTok{2}\NormalTok{)}
+  \FunctionTok{title}\NormalTok{(}\StringTok{"Graphique des variables"}\NormalTok{)}
+  \FunctionTok{draw.circle}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\AttributeTok{nv =} \DecValTok{500}\NormalTok{, }\AttributeTok{border =} \ConstantTok{NULL}\NormalTok{, }\AttributeTok{col =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{lty =} \DecValTok{1}\NormalTok{, }\AttributeTok{lwd =} \DecValTok{1}\NormalTok{)}
+  \FunctionTok{arrows}\NormalTok{(}\AttributeTok{x0 =} \FunctionTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, }\AttributeTok{times =} \FunctionTok{length}\NormalTok{(cor\_v[,}\DecValTok{1}\NormalTok{])), }
+         \AttributeTok{y0 =} \FunctionTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, }\AttributeTok{times =} \FunctionTok{length}\NormalTok{(cor\_v[,}\DecValTok{1}\NormalTok{])), }
+         \AttributeTok{x1 =}\NormalTok{ cor\_v[,}\DecValTok{1}\NormalTok{], }\AttributeTok{y1 =}\NormalTok{ cor\_v[,}\DecValTok{2}\NormalTok{], }
+         \AttributeTok{code =} \DecValTok{2}\NormalTok{, }\AttributeTok{length =} \FloatTok{0.1}\NormalTok{)}
+
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+
+\end{document}

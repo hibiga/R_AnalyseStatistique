@@ -1,0 +1,764 @@
+---
+title: "TD3 - Implémentation de l'ACP"
+author: "Courtenay Rebecca & Ducros Chloé & Lasson Marie"
+output:
+  pdf_document:
+    fig_height: 4
+    keep_tex: yes
+    number_section : true
+    toc : true
+---
+
+# Question préliminaires (bonus, 3 points)
+
+  a. Montrer que pour toutes variables aléatoires $X$ et $Y$, on a : 
+    $$\text E[(X-\text E[X])(Y-\text E[Y])] = \text E[XY] - \text E[X] \text E[Y]$$
+    
+  On a :
+  \newline $\text E[(X-\text E[X])(Y-\text E[Y])]$
+  \newline $= \text E[XY] - \text E[X]E[Y] - \text E[X]E[Y] + \text E[X]E[Y]$
+  \newline $= \text E[XY] - E[X]E[Y]$ 
+
+  b. Soit $C$ la matrice de covariance d'une matrice de données $X$. 
+    Montrer que la matrice $C$ est symétrique.
+
+  Les éléments diagonaux de C représentent les variances des données de X. De plus, les autres éléments décrivent la covariance entre $X_{i}$ et $X_{j}$ avec i $\ne$ j. Et comme, $cov(X_{i},X_{j}) = cov(X_{j},X_{i})$ alors, la matrice $C$ est symétrique. 
+  
+  
+  c. Montrer que la matrice $C$ est semi-définie positive. Rappel : 
+    la matrice symétrique $C$ est semi-définie positive 
+    ssi $\forall x \in \mathbb R^p, \text{ } x^TCx \geq 0$
+    
+  On sait que : $x^TCx = \sum_{i,j}x_{i }Cov(X_{i},X_{j})x_{j} = \sum_{i,j}Cov(x_{i}X_{i},x_{j}X_{j}) = Var(x_{1}X_{1}+...+x_{n}X_{n}) \ge$ 0.
+  \newline Donc la matrice $C$ est semi-définie positive.
+    
+  d. Montrer que pour toute matrice $C$, il y a équivalence entre : 
+    "$C$ est semi-définie positive" et "les valeurs propres de $C$ sont toutes positives ou nulles".
+    
+    
+  On suppose que $C$ est une matrice semi-définie positive et $\lambda$ une de ses valeurs propres. 
+  \newline D'après la question c, $x^TCx \ge$ 0, donc $\lambda (X^TX) \ge$ 0 $\Rightarrow$ $\lambda$ $|X|^2$ $\ge$ 0 $\Rightarrow$ $\lambda \ge$ 0 
+  \newline On peut donc conclure que : les valeurs propres de $C$ sont toutes positives ou nulles. 
+
+
+# Implémentation de l'ACP (20 points)
+
+L'implémentation de toutes les fonctions de base demandées sera notée sur 10 points. Tous les apports et améliorations (cf question5) seront notés sur 10 points.
+
+## Première étape : calcul de l'ACP
+
+On utilisera le jeu de données de décathlon :
+
+```{r}
+decathlon <- read.table(file = "AnaDo_JeuDonnees_Decathlon.csv", 
+                        header=TRUE,sep=";",dec=".", row.names=1, 
+                        check.names=FALSE, fileEncoding="latin1")
+```
+
+On pourra donc s'appuyer sur le fichier pdf "Commandes utiles" fourni dans le TD1 pour comparer nos résultats. Vos graphes seront sûrement le symétrique de ceux affichés par le package FactoMineR, vous pouvez y remédier en multipliant votre matrice de données par $(-1)$ mais ce n'est pas obligatoire.
+
+Pour tracer les cercles des corrélations vous aurez sûrement besoin du package `plotrix` qui permet de dessiner des cercles, que vous pouvez installer via la commande `install.packages("plotrix")`.
+
+```{r}
+library(plotrix)
+```
+
+De la même façon que dans le TD1, on effectuait la commande `res <- PCA(fertilite[,1:6])`, on veut une fonction qui prend en entrée le tableau de données et qui effectue l'ACP. 
+
+Dans un premier temps, on ne tiendra pas compte des variables qualitatives supplémentaires, on les traitera plus tard.
+
+En notant $X$ notre matrice de données (sans les variables descriptives supplémentaires), l'ACP consiste à trouver une matrice $Y$ contenant les mêmes données mais dans une base orthogonale différente maximisant l'explicabilité de la variance. Les étapes du calcul de l'ACP sont les suivantes :
+
+* Centrer et réduire $X$
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+X <- decathlon[,c(1:10)]
+ctr <- scale(X)
+```
+
+* Calcul de la matrice de covariance $C$ de $X$
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+C <- cov(ctr)
+```
+
+* Calcul des vecteurs propres et valeurs propres de $C$
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+VAP_VEP <- function(X){
+  data <- cov(X)
+  vap <- eigen(data)$values
+  vep <- eigen(data)$vectors
+  
+  return(list(vap, vep))
+}
+```
+* Tri des vecteurs propres et valeurs propres par ordre décroissant de l'importance des valeurs propres
+
+La fonction eigen permet de trier les valeurs. Nous venons de le faire dans la fonction VAP_VEP donc nous n'avons pas besoin d'appliquer la fonction sort/order (qui fait exactement la même chose). Il nous suffit d'appliquer : VAP_VEP(X)[[1]] pour avoir les valeurs propres triées et VAP_VEP(X)[[2]] pour avoir les vecteurs propres triés. 
+
+Ecriture des matrices V et L
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+L<-diag(VAP_VEP(X)[[1]]) #matrice diagonale des valeurs propres
+V<-VAP_VEP(X)[[2]] #matrice des vecteurs propres
+```
+
+* Ecriture des données dans la base orthonormée des vecteurs propres, ce qui correspond à une projection orthogonale de nos données sur la matrice $W$ des vecteurs propres, ce qui se fait avec le produit matriciel $X \cdot W$. Plus d'explications ci-dessous.
+
+Nous affichons que les 6 premières données. 
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+W <- as.matrix(VAP_VEP(X)[[1]],VAP_VEP(X)[[2]])
+X2<-as.matrix(X)
+head(X2%*%W)
+```
+
+1. Ecrire la fonction `ACP` qui prend en entrée un tableau de données et qui retourne l'ensemble des valeurs propres (dans une variable `$vap`) et des vecteurs propres (dans une variable `$vep` ) de la matrice de covariance, le tout trié par ordre décroissant. Dans une variable `$data` on stockera également les données centrées réduites. Pour la tester, on pourra faire l'appel suivant : `ACP(decathlon[,1:10])`
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+ACP <- function(X){
+  data <- scale(X)
+  cov <- cov(data)
+  vap <- eigen(cov)$values
+  vep <- eigen(cov)$vectors
+  
+  return(list("vap"=vap,"vep"=vep,"data"=data,"cov"=cov))
+}
+
+```
+Valeurs propres : 
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+ACP(X)$vap
+```
+Vecteurs propres : 
+Nous affichons que les 6 premières données. 
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+head(ACP(X)$vep)
+```
+Données centrée-réduite : 
+
+Nous affichons que les 6 premières données. 
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+head(ACP(X)$data)
+```
+
+Matrice de covariance : 
+Nous affichons que les 6 premières données.
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+head(ACP(X)$cov)
+```
+
+## Deuxième étape : affichage de l'ACP pour les individus
+
+2. Ecrire la fonction `individusACP` qui trace l'ACP des individus sur les axes sélectionnés. Elle aura donc en entrée un argument "axes" sur lequel tracer les données. On pourra la tester sur les deux premières dimensions avec l'appel : `individusACP(axes=1:2)`
+
+La visualisation de cette fonction se trouve dans la 5ème partie avec une version améliorée. 
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+individusACP <- function(axes, PCA) {
+  V <- as.matrix(ACP(PCA)$vep)
+  D <- as.matrix(ACP(PCA)$data)
+  res <- D%*%V
+  
+  dim1 <- paste("Dim",as.character(axes[1]))
+  dim2 <- paste("Dim",as.character(axes[2]))
+  
+  par(mar=c(4,4,4,4),pty = "s")
+  plot(res[,axes], xlab = dim1, ylab = dim2, pch = 1, col="red")
+  text(res[,axes], labels = row.names(ACP(PCA)$data), cex = 0.6, pos = 1)
+  abline(v = 0, lty = 2)
+  abline(h = 0, lty = 2)
+  title("ACP")
+  return(res)
+}
+```
+
+## Troisième étape : fonction summary
+
+3. Ecrire la fonction `summary`, permettant de retourner les informations principales de l'ACP. Il est conseillé (mais pas obligatoire) d'écrire plusieurs sous-fonctions pour composer la fonction `summary`.
+
+La visualisation de cette fonction se trouve dans la 5ème partie avec une version améliorée. 
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+summary <- function(PCA) {
+  
+  #Eigenvalues
+  vap <- ACP(PCA)$vap
+  vect <- c()
+  for (i in seq.int(0,length(vap))) {
+    somme <- sum(vap)
+    pourcentage <- (vap[i]/somme)*100
+    vect <- append(vect, pourcentage)
+  }
+  eigenvalues <- cbind(vap, vect)
+  colnames(eigenvalues) <- c("Variance", "% of var.")
+  print("Eigenvalues")
+  print(head(eigenvalues))
+  
+  #Individuals
+  dim <- individusACP(axes=1:2, PCA)
+  graphics.off()
+
+    #Dim1
+  contr_1 <- c()
+  sommecarre_1 <- dim[,1]%*%dim[,1]
+  for (i in seq.int(0,length(dim[,1]))) {
+    contr_1 <- append(contr_1, ((dim[,1][i])**2/sommecarre_1)*100)
+  }
+  individuals <- cbind(dim[,1], contr_1)
+  
+  cos2_1 <- c()
+  for (i in seq.int(0,length(dim[,1]))) {
+    cos2_1 <- append(cos2_1, dim[i,1]**2/sqrt(sum(dim[i,]**2))**2)
+  }
+  individuals <- cbind(individuals, cos2_1)
+  
+    #Dim2
+  contr_2 <- c()
+  sommecarre_2 <- dim[,2]%*%dim[,2]
+  individuals <- cbind(individuals, dim[,2])
+  
+  for (i in seq.int(0,length(dim[,2]))) {
+    contr_2 <- append(contr_2, ((dim[,2][i])**2/sommecarre_2)*100)
+  }
+  individuals <- cbind(individuals, contr_2)
+
+  cos2_2 <- c()
+  for (i in seq.int(0,length(dim[,2]))) {
+    cos2_2 <- append(cos2_2, dim[i,2]**2/sqrt(sum(dim[i,]**2))**2)
+  }
+  individuals <- cbind(individuals, cos2_2)
+  
+  colnames(individuals) <- c("Dim 1","ctr", "cos2", "Dim 2","ctr", "cos2")
+  
+  print("Individuals")
+  print(head(individuals))
+  
+  #Variables
+    #Dim1
+  corr_1 <- c()
+  for (i in seq.int(0, length(vap))) {
+    corr_1 <- append(corr_1, sqrt(vap[1])*ACP(PCA)$vep[i,1])
+  }
+  variables <- as.data.frame(corr_1)
+
+  cos2_1 <- c()
+  for (i in seq.int(0, length(corr_1))) {
+    cos2_1 <- append(cos2_1, corr_1[i]**2)
+  }
+  variables <- cbind(variables, cos2_1)
+  
+  contr_1 <- c()
+  sumSquare1 <- ACP(PCA)$vep[,1]%*%ACP(PCA)$vep[,1]
+  for (i in seq.int(0,length(ACP(PCA)$vep[,1]))) {
+    contr_1 <- append(contr_1, (ACP(PCA)$vep[i,1]**2/sumSquare1)*100)
+  }
+  variables <- cbind(variables, contr_1)
+  
+    #Dim2
+  corr_2 <- c()
+  for (i in seq.int(0, length(vap))) {
+    corr_2 <- append(corr_2, sqrt(vap[2])*ACP(PCA)$vep[i,2])
+  }
+  variables <- cbind(variables, corr_2)
+  
+  cos2_2 <- c()
+  for (i in seq.int(0, length(corr_2))) {
+    cos2_2 <- append(cos2_2, corr_2[i]**2)
+  }
+  variables <- cbind(variables, cos2_2)
+
+  contr_2 <- c()
+  sumSquare2 <- ACP(PCA)$vep[,2]%*%ACP(PCA)$vep[,2]
+  for (i in seq.int(0,length(ACP(PCA)$vep[,2]))) {
+    contr_2 <- append(contr_2, (ACP(PCA)$vep[i,2]**2/sumSquare2)*100)
+  }
+  variables <- cbind(variables, contr_2)
+  
+  nom_Var <- colnames(ACP(PCA)$data)
+  row.names(variables) <- nom_Var
+  colnames(variables) <- c("Corr 1", "Cos2 1", "Ctr 1","Corr 2", "Cos2 2", "Ctr 2")
+  
+  print("Variables")
+  print(head(variables))
+}
+```
+
+## Quatrième étape : affichage de l'ACP pour les variables
+
+4. Ecrire la fonction `variablesACP` qui trace le cercle de corrélation des variables sur les axes sélectionnés. Elle aura donc en entrée un argument "axes" sur lequel tracer les données. On pourra la tester sur les deux premières dimensions avec l'appel : `variablesACP(axes=1:2)`. Il ne sera pas obligatoire de dessiner des flèches (comme dans le package FactoMineR). 
+
+La visualisation de cette fonction se trouve dans la 5ème partie avec une version améliorée. 
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+variablesACP <- function(axes, PCA) { 
+  
+  vep <- ACP(PCA)$vep
+  vap <- ACP(PCA)$vap
+  cor_v <- c()
+  data <- ACP(PCA)$data
+  taille_v <- length(vep[,1])
+  
+  for (k in seq.int(1, taille_v)) {
+    cor_dv <- c()
+    for (i in seq.int(0, length(vap))) {
+      cor_dv <- append(cor_dv, sqrt(vap[k])*vep[i,k])
+    }
+    cor_v <- cbind(cor_v, cor_dv)
+  }
+  
+  dim1 <- paste("Dim",as.character(axes[1]))
+  dim2 <- paste("Dim",as.character(axes[2]))
+
+  par(mar=c(4,4,4,4),pty = "s")
+  plot(cor_v[,axes],xlim = c(-1,1),ylim = c(-1,1),xlab=dim1,ylab=dim2)
+  text(cor_v[,axes], labels = colnames(ACP(PCA)$data), cex = 0.6, pos = 1)
+  abline(v = 0, lty = 2)
+  abline(h = 0, lty = 2)
+  title("Graphique des variables")
+  draw.circle(0, 0, 1, nv = 500, border = NULL, col = NA, lty = 1, lwd = 1)
+}
+```
+
+
+## Dernière étape : amélioration des fonctions
+
+5. En vous inspirant des fonctions du package FactoMineR utilisées lors du TD1, améliorer toutes les fonctions écrites ci-dessus pour y inclure des options supplémentaires. Par exemple, voici une liste (non exhaustive) des choses qu'il est possible d'améliorer
+  
+En annexe se trouvent les fonctions intermédiaires que nous avons créées avant d'avoir ces versions finales. 
+
+### PCA 
+  * Dans la fonction ACP, ajouter deux paramètres supplémentaires : `quanti.sup` et `quali.sup`, qui indiqueront des colonnes. Si ces paramètres ne sont pas indiqués par l'utilisateur, alors l'ACP se comporte de la même façon que la fonction précédemment écrite. S'ils sont entrés par l'utilisateur, ils indiquent les colonnes des variables quantitatives ou qualitatives supplémentaires. Par exemple, la fonction répondra à l'appel : `PCA(decathlon, quanti.sup=11:12, quali.sup=13)`. Bien sûr, il est possible de rentrer un seul des deux arguments (comme pour le jeu de donnée de fertilité en Europe)
+  * Ajouter un paramètre en entrée de l'ACP pour savoir si l'on souhaite centrer et réduire les données. En effet, cela n'est pas toujours souhaitable (notamment quand on a des informations avec beaucoup de bruit, car le fait de normaliser les données va mettre le bruit à la même valeur que les autres données)
+  * Effectuer les calculs à chaque nouvel appel de `summarize` ou des fonctions graphiques n'est pas optimal (redondant). Le mieux serait, dès l'appel à la fonction `ACP`, de faire tous les calculs nécessaires et de les stocker dans des variables, qui seraient ensuite simplement retournées ou utilisées lors de l'appel des fonctions
+  
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+ACP_FINAL <- function(X, quanti.sup=NULL, quali.sup=NULL, cr = TRUE) {
+
+    #quanti.sub & quali.sub
+  supp <- c()
+  if (!is.null(quanti.sup)){
+    for (i in quanti.sup) {
+      supp <- append(supp, i)
+    }
+  }
+  if (!is.null(quali.sup)) {
+    for (i in quali.sup) {
+      supp <- append(supp, i)
+    }
+  }
+  if (!is.null(supp)) {
+    supp <- sort(supp)
+    X <- X[,-supp]
+  }
+  
+    #centree-reduite
+  if (cr == FALSE) {
+    data <- X
+  }
+  else {
+    data <- scale(X)
+  }
+
+    #covariance
+  cov <- cov(data) 
+    
+    #valeurs/vecteurs propres
+  vap <- eigen(cov)$values
+  vep <- eigen(cov)$vectors
+  
+    #Eigenvalues
+  vect <- c()
+  for (i in seq.int(0,length(vap))) {
+    somme <- sum(vap)
+    pourcentage <- (vap[i]/somme)*100
+    vect <- append(vect, pourcentage)
+  }
+  cumul_var <- cumsum(vect)
+  eigenvalues <- cbind(vap, vect, cumul_var)
+  colnames(eigenvalues) <- c("Variance", "% of var.", "Cumulative % of var")
+  
+    #Individus
+      #Cor
+  V <- as.matrix(vep)
+  D <- as.matrix(data)
+  cor_i <- D%*%V
+      #Contribution
+  contr_i <- c()
+  for (k in seq.int(1, length(cor_i[1,]))) {
+    sommecarre <- cor_i[,k]%*%cor_i[,k]
+    contr_di <- c()
+    for (i in seq.int(0,length(cor_i[,k]))) {
+      contr_di <- append(contr_di, ((cor_i[,k][i])**2/sommecarre)*100)
+    }
+    contr_i <- cbind(contr_i, contr_di)
+  }
+      #Cos2
+  cos2_i <- c()
+  for (k in seq.int(1, length(cor_i[1,]))) {
+    cos2_di <- c()
+    for (i in seq.int(0,length(cor_i[,k]))) {
+      cos2_di <- append(cos2_di, cor_i[i,k]**2/sqrt(sum(cor_i[i,]**2))**2)
+    }
+    cos2_i <- cbind(cos2_i, cos2_di)
+  }
+  
+    #Variables
+  taille_v <- length(vep[,1])
+      #Cor
+  cor_v <- c()
+  for (k in seq.int(1, taille_v)) {
+    cor_dv <- c()
+    for (i in seq.int(0, length(vap))) {
+      cor_dv <- append(cor_dv, sqrt(vap[k])*vep[i,k])
+    }
+    cor_v <- cbind(cor_v, cor_dv)
+  }
+  
+    #Cos2
+  cos2_v <- c()
+  for (k in seq.int(1, taille_v)) {
+    cos2_dv <- c()
+    for (i in seq.int(0, length(cor_v[k,]))) {
+      cos2_dv <- append(cos2_dv, cor_v[k,i]**2)
+    }
+    cos2_v <- cbind(cos2_v, cos2_dv)
+  }
+    #Contribution
+  contr_v <- c()
+  for (k in seq.int(1, taille_v)) {
+    contr_dv <- c()
+    sumSquare <- vep[,k]%*%vep[,k]
+    for (i in seq.int(0,length(vep[k,]))) {
+      contr_dv <- append(contr_dv, (vep[i,k]**2/sumSquare)*100)
+    }
+    contr_v <- cbind(contr_v, contr_dv)
+  }
+ 
+
+  return(list("vap"=vap,"vep"=vep,"data"=data,"cov"=cov,"eigenvalues" = eigenvalues, 
+              "cor_ind" = cor_i, "contr_ind" = contr_i, "cos2_ind" = cos2_i,
+              "cor_var" = cor_v, "cos2_var" = cos2_v, "contr_var" = contr_v))
+}
+```
+
+### Individus 
+  * Dans la fonction `individusACP` on pourra alors ajouter un argument "habillage" qui colorie les individus selon leur modalité (ie selon la colonne indiquée par l'argument)
+
+
+Dans ce cas, nous avons prédéfini les intervalles de couleurs nous même : il y a trois intervalles de couleur allant du vert au rouge en passant par l'orange. Plus nous nous approchons du vert plus l'individu, avec la dimension indiqué dans l'argument habillage, est significatif. A contrario de la couleur rouge. 
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+individusACP_FINAL <- function(axes, PCA, habillage) {
+  res <- ACP_FINAL(PCA)$cor_ind
+  colour <- c()
+  
+  for (i in seq.int(1:nrow(res))) {
+    if (abs(res[i,habillage]) < 1) {
+      clr <- "green"
+    }
+    else if (abs(res[i,habillage]) < 2.5) {
+      clr <- "orange"
+    }
+    else {
+      clr <- "red"
+    }
+    colour <- append(colour, clr)
+  }
+
+  dim1 <- paste("Dim",as.character(axes[1]))
+  dim2 <- paste("Dim",as.character(axes[2]))
+  par(mar=c(4,4,4,4),pty = "s")
+  plot(res[,axes], xlab = dim1, ylab = dim2, pch = 1, col = colour )
+  text(res[,axes], labels = row.names(ACP_FINAL(X)$data), cex = 0.6, pos = 1)
+  abline(v = 0, lty = 2)
+  abline(h = 0, lty = 2)
+  title("ACP")
+}
+individusACP_FINAL(axes=1:2, PCA=X, habillage=1)
+```
+
+### Summary
+  * Dans la fonction `summary`, ajouter un paramètre "nbelements" (par défaut égal à 10) qui détermine le nombre d'individus qui doivent être affichés
+  * Dans la fonction `summary`, pour les eigenvalues, afficher en plus leur pourcentage cumulatif de variance
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+summary_FINAL <- function(PCA, nbelements=10) {
+  
+  #Eigenvalues
+  print("Eigenvalues")
+  print(head(ACP_FINAL(PCA)$eigenvalues))
+  
+  #Individuals
+  
+  individuals <- cbind(
+    ACP_FINAL(PCA)$cor_ind[,1], ACP_FINAL(PCA)$contr_ind[,1],
+    ACP_FINAL(PCA)$cos2_ind[,1],ACP_FINAL(PCA)$cor_ind[,2],
+    ACP_FINAL(PCA)$contr_ind[,2], ACP_FINAL(PCA)$cos2_ind[,2])
+                       
+  
+  colnames(individuals) <- c("Dim 1","ctr", "cos2", "Dim 2","ctr", "cos2")
+  
+  print("Individuals")
+  print(individuals[1:nbelements,])
+  
+  #Variables
+  variables <- cbind(ACP_FINAL(PCA)$cor_var[,1], ACP_FINAL(PCA)$contr_var[,1],
+                     ACP_FINAL(PCA)$cos2_var[,1],ACP_FINAL(PCA)$cor_var[,2],
+                     ACP_FINAL(PCA)$contr_var[,2], ACP_FINAL(PCA)$cos2_var[,2])
+
+  nom_Var <- colnames(ACP_FINAL(PCA)$data)
+  row.names(variables) <- nom_Var
+  colnames(variables) <- c("Corr 1", "Cos2 1", "Ctr 1","Corr 2", "Cos2 2", "Ctr 2")
+  
+  print("Variables")
+  print(head(variables))
+}
+summary_FINAL(X, nbelements = 4)
+```
+
+### Variables 
+  * Lors de l'affichage de l'ACP pour les individus et les variables, afficher en plus les axes des abscisses et des ordonnées. Afficher les variables sous forme de vecteurs
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+variablesACP_FINAL <- function(axes, PCA) { 
+
+  V <- ACP_FINAL(PCA)$cor_var
+  
+  dim1 <- paste("Dim",as.character(axes[1]))
+  dim2 <- paste("Dim",as.character(axes[2]))
+  
+  par(mar=c(4,4,4,4),pty = "s")
+  plot(V[,axes],xlim = c(-1,1),ylim = c(-1,1),xlab=dim1,ylab=dim2, cex=0)
+  text(V[,axes], labels = colnames(ACP_FINAL(PCA)$data), cex = 0.6, pos = 1)
+  abline(v = 0, lty = 2)
+  abline(h = 0, lty = 2)
+  title("Graphique des variables")
+  draw.circle(0, 0, 1, nv = 500, border = NULL, col = NA, lty = 1, lwd = 1)
+  arrows(x0 = rep(0, times = length(V[,1])), 
+         y0 = rep(0, times = length(V[,1])), 
+         x1 = V[,1], y1 = V[,2], 
+         code = 2, length = 0.1)
+
+}
+variablesACP_FINAL(axes=1:2, X)
+```
+
+# Annexes
+
+Voici les codes intermédiaires entre les premières et les dernières fonctions que nous avons créées tout au long de ce projet. Par exemple, pour l'ACP, entre ACP et ACP_FINAL nous avons créé ACP_N. 
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+ACP_N <- function(X, quanti.sup=NULL, quali.sup=NULL, cr = TRUE) {
+
+  supp <- c()
+  
+  if (!is.null(quanti.sup)){
+    for (i in quanti.sup) {
+      supp <- append(supp, i)
+    }
+  }
+
+  if (!is.null(quali.sup)) {
+    for (i in quali.sup) {
+      supp <- append(supp, i)
+    }
+  }
+  
+  if (!is.null(supp)) {
+    supp <- sort(supp)
+    X <- X[,-supp]
+  }
+  
+  if (cr == FALSE) {
+    data <- X
+  }
+  else {
+    data <- scale(X)
+  }
+
+  cov <- cov(data) #ne peut pas faire le scale d'une variable qualitative
+  vap <- eigen(cov)$values
+  vep <- eigen(cov)$vectors
+  
+  return(list("vap"=vap,"vep"=vep,"data"=data,"cov"=cov))
+}
+```
+
+Individus
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+individusACP_N <- function(axes, PCA, habillage) {
+  V <- as.matrix(ACP_N(X)$vep)
+  D <- as.matrix(ACP_N(X)$data)
+  res <- D%*%V
+  colour <- c()
+  
+  for (i in seq.int(1:nrow(res))) {
+    if (abs(res[i,habillage]) < 1) {
+      clr <- "green"
+    }
+    else if (abs(res[i,habillage]) < 2.5) {
+      clr <- "orange"
+    }
+    else {
+      clr <- "red"
+    }
+    colour <- append(colour, clr)
+  }
+
+  
+  dim1 <- paste("Dim",as.character(axes[1]))
+  dim2 <- paste("Dim",as.character(axes[2]))
+  
+  par(mar=c(4,4,4,4),pty = "s")
+  plot(res[,axes], xlab = dim1, ylab = dim2, pch = 1, col = colour )
+  text(res[,axes], labels = row.names(ACP_N(PCA)$data), cex = 0.6, pos = 1)
+  abline(v = 0, lty = 2)
+  abline(h = 0, lty = 2)
+  title("ACP")
+  return(res)
+}
+```
+
+Summary 
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+
+summary_N <- function(PCA,nbelements=10) {
+  
+  #Eigenvalues
+  vap <- ACP_N(PCA)$vap
+  vect <- c()
+  for (i in seq.int(0,length(vap))) {
+    somme <- sum(vap)
+    pourcentage <- (vap[i]/somme)*100
+    vect <- append(vect, pourcentage)
+  }
+  eigenvalues <- cbind(vap, vect,  cumsum(vect))
+  colnames(eigenvalues) <- c("Variance", "% of var.", "Cumulative % of var")
+  print("Eigenvalues")
+  print(eigenvalues)
+  
+  #Individuals
+  dim <- individusACP_N(axes=1:2, PCA)
+   
+    #Dim1
+  contr_1 <- c()
+  sommecarre_1 <- dim[,1]%*%dim[,1]
+  for (i in seq.int(0,length(dim[,1]))) {
+    contr_1 <- append(contr_1, ((dim[,1][i])**2/sommecarre_1)*100)
+  }
+  individuals <- cbind(dim[,1], contr_1)
+  
+  cos2_1 <- c()
+  for (i in seq.int(0,length(dim[,1]))) {
+    cos2_1 <- append(cos2_1, dim[i,1]**2/sqrt(sum(dim[i,]**2))**2)
+  }
+  individuals <- cbind(individuals, cos2_1)
+  
+    #Dim2
+  contr_2 <- c()
+  sommecarre_2 <- dim[,2]%*%dim[,2]
+  individuals <- cbind(individuals, dim[,2])
+  
+  for (i in seq.int(0,length(dim[,2]))) {
+    contr_2 <- append(contr_2, ((dim[,2][i])**2/sommecarre_2)*100)
+  }
+  individuals <- cbind(individuals, contr_2)
+
+  cos2_2 <- c()
+  for (i in seq.int(0,length(dim[,2]))) {
+    cos2_2 <- append(cos2_2, dim[i,2]**2/sqrt(sum(dim[i,]**2))**2)
+  }
+  individuals <- cbind(individuals, cos2_2)
+  
+  colnames(individuals) <- c("Dim 1","ctr", "cos2", "Dim 2","ctr", "cos2")
+  
+  print("Individuals")
+  print(individuals[1:nbelements,])
+  
+  #Variables
+    #Dim1
+  corr_1 <- c()
+  for (i in seq.int(0, length(vap))) {
+    corr_1 <- append(corr_1, sqrt(vap[1])*ACP_N(PCA)$vep[i,1])
+  }
+  variables <- as.data.frame(corr_1)
+
+  cos2_1 <- c()
+  for (i in seq.int(0, length(corr_1))) {
+    cos2_1 <- append(cos2_1, corr_1[i]**2)
+  }
+  variables <- cbind(variables, cos2_1)
+  
+  contr_1 <- c()
+  sumSquare1 <- ACP_N(PCA)$vep[,1]%*%ACP_N(PCA)$vep[,1]
+  for (i in seq.int(0,length(ACP_N(PCA)$vep[,1]))) {
+    contr_1 <- append(contr_1, (ACP_N(PCA)$vep[i,1]**2/sumSquare1)*100)
+  }
+  variables <- cbind(variables, contr_1)
+  
+    #Dim2
+  corr_2 <- c()
+  for (i in seq.int(0, length(vap))) {
+    corr_2 <- append(corr_2, sqrt(vap[2])*ACP_N(PCA)$vep[i,2])
+  }
+  variables <- cbind(variables, corr_2)
+  
+  cos2_2 <- c()
+  for (i in seq.int(0, length(corr_2))) {
+    cos2_2 <- append(cos2_2, corr_2[i]**2)
+  }
+  variables <- cbind(variables, cos2_2)
+
+  contr_2 <- c()
+  sumSquare2 <- ACP_N(PCA)$vep[,2]%*%ACP_N(PCA)$vep[,2]
+  for (i in seq.int(0,length(ACP_N(PCA)$vep[,2]))) {
+    contr_2 <- append(contr_2, (ACP_N(PCA)$vep[i,2]**2/sumSquare2)*100)
+  }
+  variables <- cbind(variables, contr_2)
+  
+  nom_Var <- colnames(ACP_N(PCA)$data)
+  row.names(variables) <- nom_Var
+  colnames(variables) <- c("Corr 1", "Cos2 1", "Ctr 1","Corr 2", "Cos2 2", "Ctr 2")
+  
+  print("Variables")
+  print(variables)
+  
+}
+```
+
+Variables 
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+
+variablesACP_N <- function(axes, PCA) { 
+  vep <- ACP_N(PCA)$vep
+  vap <- ACP_N(PCA)$vap
+  cor_v <- c()
+  data <- ACP_N(PCA)$data
+  taille_v <- length(vep[,1])
+  
+  for (k in seq.int(1, taille_v)) {
+    cor_dv <- c()
+    for (i in seq.int(0, length(vap))) {
+      cor_dv <- append(cor_dv, sqrt(vap[k])*vep[i,k])
+    }
+    cor_v <- cbind(cor_v, cor_dv)
+  }
+
+  dim1 <- paste("Dim",as.character(axes[1]))
+  dim2 <- paste("Dim",as.character(axes[2]))
+  
+  par(mar=c(4,4,4,4),pty = "s")
+  plot(cor_v[,axes],xlim = c(-1,1),ylim = c(-1,1),xlab=dim1,ylab=dim2, cex = 0)
+  text(cor_v[,axes], labels = colnames(data), cex = 0.6, pos = 1)
+  abline(v = 0, lty = 2)
+  abline(h = 0, lty = 2)
+  title("Graphique des variables")
+  draw.circle(0, 0, 1, nv = 500, border = NULL, col = NA, lty = 1, lwd = 1)
+  arrows(x0 = rep(0, times = length(cor_v[,1])), 
+         y0 = rep(0, times = length(cor_v[,1])), 
+         x1 = cor_v[,1], y1 = cor_v[,2], 
+         code = 2, length = 0.1)
+
+}
+```
