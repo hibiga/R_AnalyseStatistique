@@ -1,0 +1,135 @@
+## -------------            Script R Cours 2 - 2017     -- ---------------------- 
+
+
+# Cours 2  Listes, dataframe, fonctions pr?definies , valeurs manquantes
+
+#------------        I Objets R :         LISTES         ----------------------------------
+# Contrairement aux vecteurs, facteurs et matrices
+# les composantes d'une liste peuvent ?tre de types et de structures differents
+L=list(2,"a","b",7,TRUE)
+L
+class(L);length(L)  # liste de 5 ?lements
+mode(L)
+attributes(L)
+
+liste=list(a=c(2,3),b=c("2","S",'D'));liste
+attributes(liste)
+class(liste);length(liste) # liste de 2 elements, ici liste de 2 vecteurs
+names(liste)      # noms des composantes de la liste
+names(L)
+names(L)=c("nom1","nom2")  #permet de nommer les composantes
+names(L)
+
+# S?lection
+liste[[1]]        # acc?s avec l'indice
+liste$a           # acc?s avec le nom de l'?l?ment
+liste[["a"]] 
+identical(liste$a ,liste[["a"]])
+sum(liste$a)
+liste["a"]  # simple crochet : donne aussi le nom de la composante
+liste[[c("a","b")]]
+liste[c("a","b")]
+
+
+
+
+# resultats d'une fonction donn?s sous forme de liste
+bac=c(rep("es",7),rep("s",6),rep("es",5))
+sexe=c(rep("f",10),rep("g",8))
+table(bac,sexe)
+chisq.test(table(bac,sexe))
+names(chisq.test(table(bac,sexe)))
+chisq.test(table(bac,sexe))$statistic
+?chisq.test
+
+# exemple R?gression lineaire
+poids=c(160,172,165)
+taille=c(50,65,62)
+lm(poids~taille)
+res=lm(poids~taille)
+names(res)
+res$coefficients  # coefficients de la droite de r?gression
+res$residuals
+
+
+
+# ---------------        I Objets R :     DATAFRAMES          -----------------------------
+# repr?sente les tableaux statistiques individus variables
+# peut etre vu comme une liste (liste des variables) ou matrice (matrice des donn?es)
+
+y=c(8,10,16)
+eleves=data.frame(note=y,sexe=factor(c("m","f","f")))
+eleves
+class(eleves)
+attributes(eleves)
+names(eleves)
+row.names(eleves)
+
+# s?lection avec les proc?d?s utilis?s pour les matrices ou les listes:
+# nom, indice, vecteur de bool?ens)
+eleves[,"note"]   # variable note
+eleves[,2]  	# 2eme colonne
+eleves[1,]		# premi?re ligne
+eleves[1:2,]	# lignes 1 er 2
+eleves[1,2]		# element de ligne 1 et colonne 2
+eleves[[2]]       # 2eme variable
+eleves[c(1,2)]	# 1ere et 2eme variables
+eleves[,c("note","sexe")] # variables note et sexe
+
+eleves$note  	# variable note
+eleves[["note"]]	# variable note
+critere=(eleves$note>10)
+critere
+eleves[critere,]
+eleves[eleves$note>10,]
+
+
+row.names(eleves)=c("Alain","Berthe","Chlo?")
+eleves
+eleves["Alain",]
+eleves["Alain","note"]
+
+class(eleves)
+unlist(eleves)
+class(unlist(eleves))
+sum(eleves)
+sum(unlist(eleves))
+
+#  --------------      I    QQUES FONCTIONS STATISTIQUES R PREDEFINIES   --------------------------
+
+
+
+mean(eleves$note)
+median(eleves$note)
+sum(eleves$note)
+table(eleves$sexe)
+
+summary(eleves)
+
+x=c(2,5,5,2,7,2)
+hist(x)
+
+str(eleves)
+summary(eleves)
+
+
+
+
+
+
+# ------------     I   :   repr?sentation, traitement des  VALEURS MANQUANTES    -----
+
+x=c(1,2,3,NA)		
+mean(x)
+mean(x,na.rm=TRUE)
+x^2
+
+is.na(x)
+sum(is.na(x))  # denombre les valeurs manquantes, conversion booleens en numeriques
+x[!is.na(x)]   # selectionne les donn?es non manquantes d'un vecteur
+
+y=c("a","a","b",NA)	
+length(y)
+table(y)
+table(y)/length(na.omit(y))
+table(y)/sum(table(y))
