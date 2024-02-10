@@ -1,0 +1,373 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\title{TD5 -Partial Least Squares - Discriminant Analysis}
+\author{Courtenay Rebecca \& Ducros Chloé \& Lasson Marie}
+\date{}
+
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={TD5 -Partial Least Squares - Discriminant Analysis},
+  pdfauthor={Courtenay Rebecca \& Ducros Chloé \& Lasson Marie},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+Dans ce TD, nous allons faire un PLS-DA. Regardez votre cours partie 5.3
+(page 43).
+
+On utilise un dataset indiquant l'expression de 6830 gènes dans des
+échantillons de 64 cancers.
+
+On importe les données et on retire du dataset les sous-types de cancer
+suivants : UNKNOWN, K562B-repro,K562A-repro, MCF7A-repro, MCF7D-repro (à
+faire).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dat}\FloatTok{.1} \OtherTok{\textless{}{-}} \FunctionTok{read.table}\NormalTok{(}\AttributeTok{file=}\StringTok{"nci.data.txt"}\NormalTok{)}
+\NormalTok{names.data }\OtherTok{\textless{}{-}} \FunctionTok{as.character}\NormalTok{(}\FunctionTok{read.csv}\NormalTok{(}\AttributeTok{file=}\StringTok{"names{-}sample.csv"}\NormalTok{,}\AttributeTok{header=}\ConstantTok{FALSE}\NormalTok{,}\AttributeTok{sep=}\StringTok{" "}\NormalTok{)[,}\DecValTok{1}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{question}{%
+\section{Question}\label{question}}
+
+\hypertarget{retirer-de-dat.1-et-de-names.final-les-sous-types-de-cancer-suivants-unknown-k562b-reprok562a-repro-mcf7a-repro-mcf7d-repro.}{%
+\subsection{Retirer de dat.1 et de names.final les sous-types de cancer
+suivants : UNKNOWN, K562B-repro,K562A-repro, MCF7A-repro,
+MCF7D-repro.}\label{retirer-de-dat.1-et-de-names.final-les-sous-types-de-cancer-suivants-unknown-k562b-reprok562a-repro-mcf7a-repro-mcf7d-repro.}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ech }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"UNKNOWN"}\NormalTok{, }\StringTok{"K562B{-}repro"}\NormalTok{, }\StringTok{"K562A{-}repro"}\NormalTok{, }\StringTok{"MCF7A{-}repro"}\NormalTok{, }\StringTok{"MCF7D{-}repro"}\NormalTok{)}
+\NormalTok{supp }\OtherTok{\textless{}{-}} \FunctionTok{which}\NormalTok{(names.data}\SpecialCharTok{\%in\%}\NormalTok{ech)}
+\NormalTok{names.final }\OtherTok{\textless{}{-}}\NormalTok{ names.data[}\SpecialCharTok{{-}}\NormalTok{supp]}
+\NormalTok{dat}\FloatTok{.1} \OtherTok{\textless{}{-}}\NormalTok{ dat}\FloatTok{.1}\NormalTok{[,}\SpecialCharTok{{-}}\NormalTok{supp]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{table}\NormalTok{(names.final)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## names.final
+##            BREAST      CNS    COLON LEUKEMIA MELANOMA    NSCLC  OVARIAN 
+##        4        7        5        7        6        8        9        6 
+## PROSTATE    RENAL 
+##        2        9
+\end{verbatim}
+
+Une fois les sous-types de cancer retirés, on travaille avec 59
+échantillons.
+
+On définit alors \(Y\), une variable de réponse binaire :
+
+\begin{itemize}
+\tightlist
+\item
+  1 pour les sous-types de cancer : colon, leukemia, prostate, NSCLC
+\item
+  0 pour : BREAST, SCNS, MELANOMA, OVARIAN, RENAL
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Y }\OtherTok{\textless{}{-}} \FunctionTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{59}\NormalTok{)}
+\NormalTok{group1 }\OtherTok{\textless{}{-}} \FunctionTok{which}\NormalTok{(names.final}\SpecialCharTok{\%in\%}\FunctionTok{c}\NormalTok{(}\StringTok{"COLON"}\NormalTok{,}\StringTok{"LEUKEMIA"}\NormalTok{,}\StringTok{"PROSTATE"}\NormalTok{,}\StringTok{"NSCLC"}\NormalTok{))}
+\NormalTok{Y[group1] }\OtherTok{\textless{}{-}} \DecValTok{1}
+\FunctionTok{table}\NormalTok{(Y)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Y
+##  0  1 
+## 35 24
+\end{verbatim}
+
+On importe ensuite \texttt{mixOmics} et on définit notre \(X\) et \(Y\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(mixOmics)}
+\NormalTok{X }\OtherTok{\textless{}{-}} \FunctionTok{t}\NormalTok{(dat}\FloatTok{.1}\NormalTok{)}
+\NormalTok{Y }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(Y)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{expliquer-pourquoi-on-effectue-les-deux-lignes-x---tdat.1-et-y---factory-2-points}{%
+\subsection{\texorpdfstring{Expliquer pourquoi on effectue les deux
+lignes \texttt{X\ \textless{}-\ t(dat.1)} et
+\texttt{Y\ \textless{}-\ factor(Y)} (2
+points)}{Expliquer pourquoi on effectue les deux lignes X \textless- t(dat.1) et Y \textless- factor(Y) (2 points)}}\label{expliquer-pourquoi-on-effectue-les-deux-lignes-x---tdat.1-et-y---factory-2-points}}
+
+Afin de pouvoir calculer faire des produits matricielles entre Y et X,
+il est nécessaire de prendre la transposé de X.
+
+Concernant Y, comme il ne peut prendre que 1 ou 0, celui-ci est un
+vecteur dont les éléments ne peuvent prendre que des modalités
+prédéfinies (numérique : 0 et 1). C'est pour cela qu'on le converti en
+facteur afin qu'il définisse ces deux classes.
+
+\hypertarget{effectuer-la-pls-da-des-donnuxe9es-et-tracer-le-graphe-des-individus-et-le-cercle-des-corruxe9lations-des-variables.}{%
+\subsection{Effectuer la PLS-DA des données et tracer le graphe des
+individus et le cercle des corrélations des
+variables.}\label{effectuer-la-pls-da-des-donnuxe9es-et-tracer-le-graphe-des-individus-et-le-cercle-des-corruxe9lations-des-variables.}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Run the method}
+\NormalTok{pls\_da }\OtherTok{\textless{}{-}} \FunctionTok{plsda}\NormalTok{(X, Y)}
+\CommentTok{\#Plot the samples}
+\FunctionTok{plotIndiv}\NormalTok{(pls\_da,}\AttributeTok{legend=}\ConstantTok{TRUE}\NormalTok{, }\AttributeTok{ellipse =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{title =} \StringTok{\textquotesingle{}Graphe des individus\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Sujet_TD5_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Plot the variables}
+\FunctionTok{plotVar}\NormalTok{(pls\_da, }\AttributeTok{var.names=}\ConstantTok{FALSE}\NormalTok{,}\AttributeTok{cex=}\FloatTok{0.2}\NormalTok{, }\AttributeTok{title=}\StringTok{"Cercle de corrélation des variables"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Sujet_TD5_files/figure-latex/unnamed-chunk-6-2.pdf}
+
+\hypertarget{tracer-le-cercle-des-variables-avec-seulement-les-variables-ayant-contribuuxe9-uxe0-plus-de-40-uxe0-la-cruxe9ation-des-axes.}{%
+\subsection{Tracer le cercle des variables avec seulement les variables
+ayant contribué à plus de 40\% à la création des
+axes.}\label{tracer-le-cercle-des-variables-avec-seulement-les-variables-ayant-contribuuxe9-uxe0-plus-de-40-uxe0-la-cruxe9ation-des-axes.}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plotVar}\NormalTok{(pls\_da, }\AttributeTok{cutoff=}\FloatTok{0.4}\NormalTok{, }\AttributeTok{var.names=}\ConstantTok{FALSE}\NormalTok{, }\AttributeTok{cex=}\FloatTok{0.2}\NormalTok{,}
+        \AttributeTok{title=}\StringTok{"Cercle de corrélation des variables ayant contribué à plus de 40\%"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Sujet_TD5_files/figure-latex/unnamed-chunk-7-1.pdf}
+
+\hypertarget{effectuer-la-pls-da-avec-10-composants-puis-effectuer-la-classification-avec-la-fonction-perf-et-10-ruxe9puxe9titions.}{%
+\subsection{\texorpdfstring{Effectuer la PLS-DA avec 10 composants, puis
+effectuer la classification avec la fonction \texttt{perf} et 10
+répétitions.}{Effectuer la PLS-DA avec 10 composants, puis effectuer la classification avec la fonction perf et 10 répétitions.}}\label{effectuer-la-pls-da-avec-10-composants-puis-effectuer-la-classification-avec-la-fonction-perf-et-10-ruxe9puxe9titions.}}
+
+Pour la reproductibilité de cette question, on définira la seed à 2.
+
+Ensuite, afficher le résultat grâce à:
+\texttt{plot(résultat\_de\_perf,\ col\ =\ color.mixo(5:7),\ sd\ =\ TRUE,\ legend.position\ =\ "horizontal",ylim=c(0,0.4))}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{2}\NormalTok{) }
+\NormalTok{pls\_da2 }\OtherTok{\textless{}{-}} \FunctionTok{plsda}\NormalTok{(X,Y, }\AttributeTok{ncomp=}\DecValTok{10}\NormalTok{)}
+\NormalTok{résultat\_de\_perf }\OtherTok{\textless{}{-}}  \FunctionTok{perf}\NormalTok{(pls\_da2, }\AttributeTok{nrepeat =} \DecValTok{10}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(résultat\_de\_perf, }\AttributeTok{col =} \FunctionTok{color.mixo}\NormalTok{(}\DecValTok{5}\SpecialCharTok{:}\DecValTok{7}\NormalTok{), }\AttributeTok{sd =} \ConstantTok{TRUE}\NormalTok{, }
+     \AttributeTok{legend.position =} \StringTok{"horizontal"}\NormalTok{,}\AttributeTok{ylim=}\FunctionTok{c}\NormalTok{(}\FloatTok{0.1}\NormalTok{,}\FloatTok{0.4}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Sujet_TD5_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\hypertarget{lancer-une-sparse-pls-da-en-ne-gardant-dans-les-loadings-de-x-que-4-variables-sur-le-premier-axe-et-3-sur-le-deuxiuxe8me-et-afficher-le-graphe-des-individus-et-le-cercle-des-variables.}{%
+\subsection{\texorpdfstring{Lancer une sparse PLS-DA en ne gardant dans
+les loadings de \(X\) que 4 variables sur le premier axe et 3 sur le
+deuxième et afficher le graphe des individus et le cercle des
+variables.}{Lancer une sparse PLS-DA en ne gardant dans les loadings de X que 4 variables sur le premier axe et 3 sur le deuxième et afficher le graphe des individus et le cercle des variables.}}\label{lancer-une-sparse-pls-da-en-ne-gardant-dans-les-loadings-de-x-que-4-variables-sur-le-premier-axe-et-3-sur-le-deuxiuxe8me-et-afficher-le-graphe-des-individus-et-le-cercle-des-variables.}}
+
+Si besoin, se référer à la documentation :
+\url{https://www.rdocumentation.org/packages/mixOmics/versions/6.3.2/topics/splsda}
+(2 points)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{spls\_da }\OtherTok{\textless{}{-}} \FunctionTok{splsda}\NormalTok{(X, Y, }\AttributeTok{keepX =} \FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{3}\NormalTok{))}
+\CommentTok{\#Plot the samples}
+\FunctionTok{plotIndiv}\NormalTok{(spls\_da,}\AttributeTok{legend=}\ConstantTok{TRUE}\NormalTok{, }\AttributeTok{ellipse =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{title =} \StringTok{\textquotesingle{}Graphe des individus\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Sujet_TD5_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Plot the variables}
+\FunctionTok{plotVar}\NormalTok{(spls\_da,}\AttributeTok{title=}\StringTok{"Cercle de corrélation des variables"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Sujet_TD5_files/figure-latex/unnamed-chunk-9-2.pdf}
+
+\hypertarget{on-cherche-uxe0-trouver-le-nombre-optimal-de-variables-uxe0-garder.-pour-cela-on-cruxe9e-une-liste-de-nombres-quon-va-tester}{%
+\subsection{On cherche à trouver le nombre optimal de variables à
+garder. Pour cela on crée une liste de nombres qu'on va tester
+:}\label{on-cherche-uxe0-trouver-le-nombre-optimal-de-variables-uxe0-garder.-pour-cela-on-cruxe9e-une-liste-de-nombres-quon-va-tester}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{list.keepX }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{5}\SpecialCharTok{:}\DecValTok{10}\NormalTok{, }\FunctionTok{seq}\NormalTok{(}\DecValTok{20}\NormalTok{, }\DecValTok{200}\NormalTok{, }\DecValTok{10}\NormalTok{))}
+\NormalTok{list.keepX}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1]   5   6   7   8   9  10  20  30  40  50  60  70  80  90 100 110 120 130 140
+## [20] 150 160 170 180 190 200
+\end{verbatim}
+
+Fixer la seed à 2 et, grâce à la fonction \texttt{tune.splsda}, trouver
+le nombre optimal de variables à garder sur les deux premiers axes.
+Ensuite, afficher le résultat de l'appel grâce à la fonction `plot' (4
+points)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{2}\NormalTok{)}
+\NormalTok{spls\_da\_tune }\OtherTok{\textless{}{-}} \FunctionTok{tune.splsda}\NormalTok{(X, Y, }\AttributeTok{ncomp =} \DecValTok{3}\NormalTok{, }\AttributeTok{dist =} \StringTok{\textquotesingle{}max.dist\textquotesingle{}}\NormalTok{, }\AttributeTok{progressBar =} \ConstantTok{FALSE}\NormalTok{, }
+                            \AttributeTok{validation =} \StringTok{\textquotesingle{}Mfold\textquotesingle{}}\NormalTok{, }\AttributeTok{folds =} \DecValTok{3}\NormalTok{, }\AttributeTok{measure =} \StringTok{"BER"}\NormalTok{, }
+                            \AttributeTok{test.keepX =}\NormalTok{ list.keepX, }\AttributeTok{nrepeat =} \DecValTok{10}\NormalTok{)}
+
+\NormalTok{spls\_da\_tune}\SpecialCharTok{$}\NormalTok{choice.keepX[}\DecValTok{1}\SpecialCharTok{:}\DecValTok{2}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## comp1 comp2 
+##   180    50
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(spls\_da\_tune)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Sujet_TD5_files/figure-latex/unnamed-chunk-12-1.pdf}
+
+\hypertarget{moduxe8le-final}{%
+\subsection{Modèle final}\label{moduxe8le-final}}
+
+Réaliser la PLS-DA avec le nombre optimal de variables sur les deux
+premiers axes, puis tracer le graphe des individus.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{select.keepX }\OtherTok{\textless{}{-}}\NormalTok{ spls\_da\_tune}\SpecialCharTok{$}\NormalTok{choice.keepX[}\DecValTok{1}\SpecialCharTok{:}\DecValTok{2}\NormalTok{]}
+\NormalTok{pls\_da\_final }\OtherTok{\textless{}{-}} \FunctionTok{splsda}\NormalTok{(X, Y, }\AttributeTok{keepX =}\NormalTok{ select.keepX)}
+
+\FunctionTok{plotIndiv}\NormalTok{(pls\_da\_final,}\AttributeTok{legend=}\ConstantTok{TRUE}\NormalTok{, }\AttributeTok{ellipse =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{title =} \StringTok{\textquotesingle{}Graphe des individus\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Sujet_TD5_files/figure-latex/unnamed-chunk-13-1.pdf}
+
+\end{document}
