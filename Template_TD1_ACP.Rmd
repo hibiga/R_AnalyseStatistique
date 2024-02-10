@@ -1,0 +1,194 @@
+---
+title: "TD1 - Analyse en Composantes Principales sur les données de fertilité en Europe"
+author: "Courtenay Rebecca & Ducros Chloé & Lasson Marie"
+output:
+  pdf_document:
+    fig_height: 4
+    keep_tex: yes
+    number_section : true
+    toc : true
+---
+
+# Présentation
+
+On s'intéresse à la fertilité des femmes en Europe en 2012. Pour cela, on a construit un tableau de données avec 39 Pays d'Europe en lignes et en colonnes les tranches d'âge 15-19, 20-24, 25-29, 30-34, 35-39, 40 et plus. Dans une case du tableau on a la fertilité moyenne des femmes d'un pays pour une tranche d'âge. La fertilité correspond ici au nombre moyen d'enfants nés vivants pour 1000 femmes. Pour répondre à l'ensemble des questions, il vous faudra mettre en oeuvre une ACP à partir des données fournies dans le fichier "AnaDo_JeuDonnees_FertiliteEurope.csv"
+
+Il vous est demandé de fournir un rapport répondant aux questions posées. Dans ce rapport, chaque étape de votre code devra être indiquée : chargement de la librairie de l'ACP, chargement des données, affichage des graphes et des données permettant de répondre aux questions, etc.
+
+Pour fournir le rapport, vous pouvez au choix : compléter ce fichier et le compiler pour créer le PDF avec les réponses ; ou bien créer votre propre rapport répondant aux questions. Dans les deux cas, les étapes vous permettant de répondre aux questions devront apparaître (chargement des données, affichage des graphes, ...)
+
+
+# Questions
+
+1) Importer les données et en faire l'ACP. Dans ce jeu de données, que représentent les individus et que représentent les variables ?
+
+2) En analysant les deux graphes générés par l'ACP de la question 1), indiquer : 
+
+    a. Quelle est la variable la plus liée à la dimension 2 ?
+  
+    b. Quel pays a le taux de fertilité le plus élevé pour la classe 20-24 ans ?
+  
+    c. Que peut-on dire du taux de fertilité à tout âge des Danoises et des Hollandaises ? 
+  
+    d. Que peut-on dire du taux de fertilité des Irlandaises comparativement aux autres pays d'Europe ? 
+  
+    e. Citer quatre pays ayant un taux de fertilité très proche pour toutes les classes d'âge. 
+  
+    f. Le taux de fertilité (pour toutes les classes d'âge) des Croates est-il proche de 0 ou proche du taux de fertilité moyen des pays d'Europe ?
+  
+    g. Que peut-on dire sur la fertilité des femmes de plus de 35 ans dans les pays où la fertilité des adolescentes est faible ?
+
+3) En utilisant la fonction `summary`, indiquer le pourcentage d'inertie associé au plan principal. Ensuite, indiquer quel est le pays ayant le plus contribué à la création de l'axe  1, puis quels sont les trois pays ayant le plus contribué à la création de l'axe 2. Bien montrer la table des résultats ayant permis de répondre à cette question. 
+
+4) En utilisant la fonction `plot`, tracer le graphe des individus et des variables sur les dimensions 3 et 4.
+
+5) En utilisant la fonction `dimdesc`, indiquer quelles sont les quatre variables ayant un taux de corrélation (positif ou négatif) de plus de 0.8 avec la première dimension.
+
+6) Quels sont les 6 individus ayant le plus contribué à la construction du plan (sur les dimensions 1-2) ?  Bonus : tracer un graphique pour répondre à cette question.
+
+7) Tracer le cercle des corrélations sur les dimensions 1 et 2 en y affichant les deux variables ayant le plus contribué. 
+
+8) Faire l'ACP avec la variable supplémentaire "Région" puis tracer le graphe des individus sur les dimensions 1 et 2 avec le coloriage en fonction de la région. Sur ce graphe, ne sélectionner que les indivus qui ont une qualité de projection supérieure à 0.95.  Comparer la région Europe de l'Est à la région Europe du Nord. 
+
+
+
+# Template
+
+
+## Chargement de la librairie
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+library(FactoMineR)
+```
+
+## 1.Importation des données et affichage des graphes
+
+On importe dans un premier temps les données de fertilité en Europe.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+donnees = read.csv(file = "AnaDo_JeuDonnees_FertiliteEurope.csv", sep = ";", dec = ".",
+                   header=TRUE, row.names = 1)
+
+head(donnees)
+
+```
+
+Les individus concernés sont les femmes. Elles sont classées selon les pays et les régions d'Europe dans lesquelles elles se trouvent mais aussi dans la tranche d'âge.
+Ainsi, pour chaque tranche d'âge nous avons la moyenne de la fertilité des femmes dans leur pays respectif. 
+On peut voir qu'il y a de deux variables qualitatives et 6 variables quantitatives.
+Les 2 variables quantitatives sont : 
+
+<ui><li>Pays</li><li>Région</li></ui>
+
+
+Les 4 variables qualitatives sont : 
+<ui><li>15-19</li><li>20-24</li><li>25-29</li><li>30-34</li><li>35-39</li><li>40+</li></ui>
+
+On fait l'ACP de ces données.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+#Il faut enlever les valeurs quantitatives
+p <- ncol(donnees)
+n <- nrow(donnees)
+
+nouveauDonnees <- donnees[,c(2:p-1)]
+acp <- PCA(nouveauDonnees);acp
+```
+
+
+## 2.Interprétation de l'ACP
+
+    a. 
+La variable la plus liée à la dimension 2 est : 25-29.
+  
+    b. 
+Le taux de fertilité le plus élevé pour la classe 20-24 semble être l'Albanie. 
+  
+    c.
+Le taux de fertilité à tout âge des Danoises et des Hollandaises semblent être, en moyenne, la même. En effet, les deux points sont proches l'un de l'autre. Il est donc probable que les variables des individus soient très similaires.
+  
+    d.
+D'après le graphique des variables, on remarque que l'Irlande est plus impacté par la dim 1 alors qu'il ne l'est pas du tout par la dim 2. Il est donc corrélé par l'axe 1. Nous remarquons également que plus nous allons à droite plus nous avons une représentation des femmes âgées tandis que si nous allons vers le côté gauche, nous avons une représentation des femmes jeunes. Donc l'Irlande, qui a son point sur la dimension 1 du côté droit, a un taux de fertilité qui est généralement plus fréquent chez les femmes ayant minimum 30 ans.
+  
+    e.
+Estonie, Croatie, République-Tchèque et Lettonie. 
+
+    f.
+Le taux de fertilité des Croates est proche du taux de fertilitié moyen des pays d'Europe car les valeurs sont centrées sur une valeur moyenne. 
+
+    g.
+La fertilité des femmes de plus de 35 ans est forte dans les pays où la fertilité des adolescentes est faible. En effet, la classe 15-19 a une corrélation négative alors que les classes 35+ ont une corrélation positive: ces classes sont très corrélées mais dans un sens inverse. Ils sont donc opposés. 
+
+
+## 3.Pourcentage d'inertie du plan principal
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+summary(acp, nbelements = Inf)
+```
+Le pourcentage d'inertie associé au plan principal est : 84.36911%.
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+acp$eig
+```
+
+Axe1 : Irlande (11.828)
+Axe2 : Espagne (13.110), Albanie (11.182), France (9.911)
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+acp$ind$contrib
+```
+
+## 4.Graphe sur les dimensions 3 et 4
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+plot(acp, axes = c(3,4))
+plot(acp, axes = c(3,4), choix='var')
+```
+
+
+## 5.Variables corrélées à la première dimension
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+dimdesc(acp, axes = 1)
+```
+
+Les quatre variables ayant un taux de corrélation de plus de 0.8 à la première dimension sont : 
+<ui><li>15-19</li><li>30-34</li><li>35-39</li><li>40 et..</li></ui>
+
+
+## 6.Individus contribuant le plus à la création du plan
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+acp2 <- PCA(nouveauDonnees,ncp=2,graph=FALSE)
+plot(acp2,invisible=c('ind.sup'),select='contrib  6',habillage='contrib',
+     title="Six individus ayant contribué à la création du plan")
+```
+
+Les six individus ayant le plus contribué à la création du plan sont: Irlande, Espagne, Moldavie, Bulgarie, Ukraine et Alabnie. 
+
+## 7.Cercle des corrélations
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+plot(acp2,choix='var',select='contrib  2',unselect=0)
+```
+Les deux tranches d'âge qui ont le plus contribué sont 25-29 ans et 30-34 ans.
+
+## 8.Graphique final
+Faire l'ACP avec la variable supplémentaire "Région" puis tracer le graphe des individus sur les dimensions 1 et 2 avec le coloriage en fonction de la région. Sur ce graphe, ne sélectionner que les indivus qui ont une qualité de projection supérieure à 0.95.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+acp3<-PCA(donnees,ncp=2,quali.sup=c(7),graph=FALSE)
+
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+plot(acp3,invisible=c('quali','ind.sup'),habillage=7,
+     title="Graphe des individus de l'ACP",select='cos2  0.95')
+```
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, , include=TRUE, paged.print=FALSE}
+plot(acp3,invisible=c('ind','ind.sup'),select='contrib  39',
+     habillage=7,title="Graphe des individus de l'ACP")
+```
+L'Europe de l'Est et du Nord sont diamétralement opposées, d'après le graphique. Les femmes de l'Europe de l'Est ont un plus grand taux de fécondité lorsqu'elles sont jeunes. Contrairement aux femmes de l'Europe du Nord. 
